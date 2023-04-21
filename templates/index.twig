@@ -1,51 +1,217 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="{{ currentSite.language }}">
 
-<head>
-    {% block head %}
+<head>   
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta charset="utf-8" />
     <title>{{ docTitle ?? siteName }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0,
       maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <meta name="referrer" content="origin-when-cross-origin" />
-
     {% css alias('@web') ~ '/web/assets/' ~ 'styles.css' with {type: 'text/css'} %}
-
-    {% endblock %}
 </head>
 
-
-<body {{ attr(bodyAttributes ?? {}) }}>
-    {% block header %}
-    <header>
-        <div class="topnav" id="myTopnav">
-            {% for navItem in navigation.linkGroup.all() %}
-            <ul class="active">
-                {{ navItem.customLink.getLink({ class: 'nav-link' }) }}
-            </ul>
-            {% endfor %}
-        </div>
-    </header>
-    {% endblock %}
-
-
-    {% block body %}
-    
-    {% endblock %}
-
-    {% block footer %}
-    <footer>
-        <div class="bottomnav">
-            {% for navItem in footernavigation.footerLinkGroup.all() %}
-            <ul class="active">
-                {{ navItem.footerlink.getLink({ class: 'nav-link' }) }}
-            </ul>
-            {% endfor %}
-        </div>
-    </footer>
-    {% endblock %}
-
-</body>
-
+<body>  
+    <div id="main">
+        <div class="container">
+          <div class="mainContent">
+            <div class="formulier">
+              <div class="loader__wrapper hidden" id="loader__wrapper">
+                <div class="loader"></div>
+              </div>
+              <div id="formulier">
+                {% set form = craft.formie.forms.handle('findYourCar').all() %}
+                {{ craft.formie.renderForm('findYourCar') }}
+              </div>
+            </div>
+          </div>        
+      </div>
+      
+      <script>
+        (() => {
+          const allFields = Array.from(document.querySelectorAll('[name="fields[voornaam]"],[name="fields[achternaam]"],[name="fields[aantalPersonen]"],[name="fields[adres][address1]"],[name="fields[adres][zip]"],[name="fields[adres][state]"]'));
+          const fields = Array.from(document.querySelectorAll(' [name="fields[aankomstDatum][datetime]"], [name="fields[vertrekDatum][datetime]"], [name="fields[drop]"]'));
+          const hiddenFields = Array.from(document.querySelectorAll('.fui-hidden'));
+          const accommodatie = Array.from(document.querySelectorAll('[name="fields[drop]"]'));
+          const Submit = Array.from(document.querySelectorAll('[data-submit-action="submit"]'));
+          Submit.forEach(e => e.disabled = true);
+          accommodatie.forEach((el) => el.addEventListener('change', () => {
+            if (el.value === "") {
+              Submit.forEach(e => e.disabled = true);
+            }
+          }))
+          fields.forEach((a) => a.addEventListener('change', () => {
+            if (fields.filter(field => field.value).length === fields.length) {
+              document.getElementById("loader__wrapper").classList.remove('hidden');
+              const fd = new FormData(document.querySelector('form'));
+              fd.delete('action');
+              fetch('/Api/available', {
+                method: 'POST',
+                body: fd,
+              }).then(response => response.json()).then((res) => {
+                document.getElementById("loader__wrapper").classList.add('hidden');
+                if (res.success) {
+                  if (fields.filter(field => field.value).length === fields.length && allFields.filter(field => field.value).length === allFields.length) {
+                    Submit.forEach(e => e.disabled = false);
+                  }
+                  // als er plek is dan komen de rest van de velden tevoorschijn 
+                  hiddenFields.forEach(e => e.classList.remove('fui-hidden'));
+                } else if (res.fail) {
+                  Submit.forEach(e => e.disabled = true);
+                  document.getElementById("loader__wrapper").classList.add('hidden');
+                  hiddenFields.forEach(e => e.classList.add('fui-hidden'));
+                }
+              })
+            } else {
+              hiddenFields.forEach(e => e.classList.add('fui-hidden'));
+            }
+          })
+          )
+          allFields.forEach
+          const getModifier = (name) => {
+            const addressModifier = name.match(/fields\[adres]\[(\w+)]/);
+            if (addressModifier && addressModifier[1]) {
+              return { type: 'address', modifier: addressModifier[1] };
+            }
+            const naamModifier = name.match(/fields\[(\w+)]/);
+            if (naamModifier && naamModifier[1]) {
+              return { type: 'name', modifier: naamModifier[1] };
+            }
+            return null;
+          }
+          allFields.forEach((a) => a.addEventListener('keyup', () => {
+            if (a.value.length === 0) {
+              const { type, modifier } = getModifier(a.name);
+              hideError(`#error${modifier[0].toUpperCase()}${modifier.slice(1)}`);
+            }
+            const nonValidFields = allFields.filter((el) => {
+              if (el.value.length === 0) {
+                return true;
+              }
+              const { type, modifier } = getModifier(el.name);
+              if (type === 'address') return !validateAddress(modifier, el);
+              if (type === 'name') return !validateNaam(modifier, el);
+              return false;
+            });
+            if (nonValidFields.length === 0) {
+              Submit.forEach(e => e.disabled = false);
+            } else {
+              Submit.forEach(e => e.disabled = true);
+            }
+          }));
+          const showError = (fieldname, showErrorName) => {
+            const errorMessage = document.querySelector(`${showErrorName}`);
+            if (errorMessage < 1) {
+              var tag = document.createElement("p");
+              tag.id = `${showErrorName}`
+              var text = document.createTextNode('Oeps er is iets fout gegaan');
+              tag.appendChild(text);
+              var el = document.querySelector(`${fieldname}`);
+              el.parentElement.appendChild(tag);
+            }
+          }
+          const hideError = (hideErrorName) => {
+            const errorMessage = document.querySelector(`${hideErrorName}`);
+            if (errorMessage !== null) {
+              errorMessage.parentElement.removeChild(errorMessage);
+            }
+          }
+          const validateNaam = (modifierNaam, a) => {
+            let dataNaamGegevens;
+            switch (modifierNaam) {
+              case 'voornaam':
+                dataNaamGegevens = a.closest(`[data-valid-voornaam]`).dataset.validVoornaam;
+                const errorVoornaam = document.querySelector('[id="errorVoornaam"]');
+                if (dataNaamGegevens) {
+                  voornaam = (new RegExp(dataNaamGegevens)).test(a.value);
+                  if (voornaam === true) {
+                    hideError('#errorVoornaam');
+                    return true;
+                  } else if (voornaam === false) {
+                    if (errorVoornaam < 1) {
+                      showError('[name="fields[voornaam]"]', 'errorVoornaam');
+                    }
+                    return false;
+                  }
+                }
+                break;
+              case 'achternaam':
+                dataNaamGegevens = a.closest(`[data-valid-achternaam]`).dataset.validAchternaam;
+                if (dataNaamGegevens) {
+                  achternaam = (new RegExp(dataNaamGegevens)).test(a.value);
+                  const errorAchternaam = document.querySelector('[id="errorAchternaam"]');
+                  if (achternaam === true) {
+                    hideError('#errorAchternaam');
+                    return true;
+                  } else if (achternaam === false) {
+                    if (errorAchternaam < 1) {
+                      showError('[name="fields[achternaam]"]', 'errorAchternaam');
+                    }
+                    return false
+                  }
+                }
+                break;
+              case 'aantalPersonen':
+                return a.value > 0;
+            }
+          }
+          const validateAddress = (modifierAddress, a) => {
+            let dataGegevens;
+            switch (modifierAddress) {
+              case 'address1':
+                dataGegevens = a.closest(`[data-valid-state]`).dataset.validAddress1;
+                const errorAddress1 = document.querySelector('[id="errorAddress1"]');
+                if (dataGegevens) {
+                  address1 = (new RegExp(dataGegevens)).test(a.value);
+                  if (address1 === true) {
+                    hideError('#errorAddress1');
+                    return true;
+                  } else if (address1 === false) {
+                    if (errorAddress1 < 1) {
+                      showError('[name="fields[adres][address1]"]', 'errorAddress1');
+                    }
+                    return false;
+                  }
+                }
+                break;
+              case 'zip':
+                dataGegevens = a.closest(`[data-valid-state]`).dataset.validZip;
+                const errorZip = document.querySelector('[id="errorZip"]')
+                if (dataGegevens) {
+                  zip = (new RegExp(dataGegevens)).test(a.value);
+                  if (zip === true) {
+                    hideError('#errorZip');
+                    return true;
+                  } else if (zip === false) {
+                    if (errorZip < 1) {
+                      showError('[name="fields[adres][zip]"]', 'errorZip');
+                    }
+                    return false;
+                  }
+                }
+                break;
+              case 'state':
+                dataGegevens = a.closest(`[data-valid-state]`).dataset.validState;
+                const errorState = document.querySelector('[id="errorState"]')
+                if (dataGegevens) {
+                  state = (new RegExp(dataGegevens)).test(a.value);
+                  if (state === true) {
+                    hideError('#errorState');
+                    return true;
+                  } else if (state === false) {
+                    if (errorState < 1) {
+                      showError('[name="fields[adres][state]"]', 'errorState');
+                    }
+                    return false;
+                  }
+                }
+                break;
+              default: false;
+            }
+            return true;
+          }
+        }
+        )();
+      </script>
+    </body>
 </html>

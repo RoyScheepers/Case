@@ -1,5 +1,5 @@
 fieldLayouts:
-  43be4efb-9c14-412d-811b-6aec3dce84c3:
+  f673eec9-02ba-4f03-9349-1da47a1edf73:
     tabs:
       -
         elementCondition: null
@@ -26,29 +26,17 @@ fieldLayouts:
             tip: null
             title: null
             type: craft\fieldlayoutelements\entries\EntryTitleField
-            uid: 5599a053-e6b1-49c7-a55e-3e1b50249724
-            userCondition: null
-            warning: null
-            width: 100
-          -
-            elementCondition: null
-            fieldUid: 42ba97e6-8304-45bc-9fc7-c69cf07d793d # Algemenevoorwaarden 
-            instructions: null
-            label: null
-            required: false
-            tip: null
-            type: craft\fieldlayoutelements\CustomField
-            uid: 7630ade4-9f6b-48db-9f16-88b4004a2f54
+            uid: f3017567-f0b8-4899-82e5-b1f6f27b90a4
             userCondition: null
             warning: null
             width: 100
         name: Content
-        uid: b77e2ecd-3086-4c46-b6ab-263865c75076
+        uid: c6a67134-ca2d-42b9-9870-9716897d8ef9
         userCondition: null
-handle: voorwaarden
+handle: default
 hasTitleField: true
-name: 'Voorwaarden '
-section: 6611d210-e8e2-492d-9a7b-829ee16b727f # AlgemeneVoorwaarden
+name: Default
+section: 3a7302dc-ffd8-4c9d-bdc3-49ba3126e6d3 # Display content
 sortOrder: 1
 titleFormat: null
 titleTranslationKeyFormat: null
