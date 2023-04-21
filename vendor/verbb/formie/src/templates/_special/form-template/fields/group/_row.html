@@ -1,0 +1,24 @@
+{# Keep track of the outer repeater field #}
+{% set groupField = field %}
+
+{# There will only ever be 1 page. #}
+{% set page = field.fieldLayout.pages[0] ?? null %}
+
+{% if page %}
+    {% fieldtag 'nestedFieldRows' %}
+        {% for row in page.rows %}
+            {% fieldtag 'nestedFieldRow' %}
+                {% for field in row.fields %}
+                    {# Tell child fields about this parent, so that namespacing works #}
+                    {% do field.setParentField(groupField, "rows[#{id}][fields]") %}
+                
+                    {{ craft.formie.renderField(form, field, {
+                        element: block ?? null,
+                    }) }}
+                {% endfor %}
+            {% endfieldtag %}
+        {% endfor %}
+    {% endfieldtag %}
+{% endif %}
+
+{{ hiddenInput(field.getHtmlName('sortOrder[]'), id) }}

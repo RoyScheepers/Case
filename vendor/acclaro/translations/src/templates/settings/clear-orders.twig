@@ -1,0 +1,32 @@
+{% extends "translations/_layouts/settings" %}
+{% import "_includes/forms" as forms %}
+
+{% set title = 'Clear Orders'|t %}
+
+{% block header %}
+    {{ parent() }}
+    {{ include('translations/_components/app-info') }}
+{% endblock %}
+
+{% set crumbs = [
+    { label: 'Translations'|t, url: url('translations') }
+] %}
+
+{% block content %}
+<form id="delete-all-orders" class="utility" method="post" accept-charset="UTF-8">
+    {{ csrfInput() }}
+    {{ forms.hidden({
+        name: 'action',
+        value: 'translations/settings/delete-all-orders',
+    }) }}
+
+    <div class="readable">
+        <h3>{{ 'Need a fresh start?'|t('app') }}</h3>
+        {{ 'Clear all translation orders.'|t('app') }}
+    </div>
+    <div class="buttons">
+        <button type="button" data-confirm="{{ 'Are you sure you want to continue?'|t }}" class="formsubmit btn submit icon" data-icon="trash" data-redirect="{{ '/admin/translations/settings/clear-orders' }}" value="submit">{{ "Clear orders"|t('app') }}</button>&nbsp;&nbsp;
+    </div>
+    <span class="warning" title="{{ 'Warning'|t('app') }}" data-icon="alert">{{' This action cannot be undone'}}</span>
+</form>
+{% endblock %}

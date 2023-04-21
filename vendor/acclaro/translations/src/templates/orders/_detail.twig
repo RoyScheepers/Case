@@ -1,0 +1,180 @@
+{% extends '_layouts/cp' %}
+{% import '_includes/forms' as forms %}
+
+{% do view.registerAssetBundle("acclaro\\translations\\assetbundles\\OrderAsset") %}
+
+{# For Export/Import and regenrate preview url's buttons #}
+{% set exportImportStatus = '' %}
+{% if not order.isExportImportAllowed %}
+	{% set exportImportStatus = 'disabled' %}
+{% endif %}
+
+{# For checking if form's input fields needs to be disabled #}
+{% if not isEditable %}
+	{% set isEditable = "noClick" %}
+{% endif %}
+
+{% set title = (isSubmitted) ? order.title : 'Create a new order' %}
+
+{% block actionButton %}
+	{% if not isProcessing %}
+		<div class="translations-loader hidden">
+			<p class="translations-loader-msg">
+				{{ 'Please wait and do not close this window until the page finishes loading.'|t }}</p>
+		</div>
+		<div class="item" data-position="left" data-colspan="1">
+			<div class="buttons">
+                <input type="hidden" id="order-attr" data-status="{{ orderRecentStatus|default('pending') }}" data-isUpdateable="{{ isUpdateable|default('') }}"
+                data-submitted="{{ isSubmitted }}" data-changed="{{ isChanged }}"
+				data-has-completed-file="{{ order.hasCompletedFiles }}"
+				data-is-tm-aligned = "{{ isTargetChanged is empty }}"
+				data-translator-services={{ translatorServices|json_encode|raw }}
+				data-translator="{{ order.translator.service|default('export_import') }}"/>
+				<div id="new-order-button-group" class="btngroup submit"></div>
+			</div>
+		</div>
+	{% endif %}
+{% endblock %}
+
+{% set crumbs = [
+    { label: 'Translations'|t, url: url('translations') },
+    { label: 'Orders'|t, url: url('translations/orders') },
+] %}
+
+{% if isSubmitted %}
+	{% if not isProcessing %}
+		{% if not isChanged %}
+			{% if order.requestQuote and (order.isGettingQuote or order.isAwaitingApproval) %}
+				{% set selectedTab = "quote" %}
+			{% else %}
+				{% set selectedTab = "files" %}
+			{% endif %}
+		{% endif %}
+
+		{% set tabs = {
+            "order": {label: "Order settings"|t, url: "#order"},
+            "files": {label: "Order details"|t, url: "#files"},
+        } %}
+
+		{% if order.requestQuote %}
+			{% set tabs = tabs|merge({
+				"quote": {label: "Order quote"|t, url: "#quote"}
+			}) %}
+		{% endif %}
+	{% endif %}
+{% endif %}
+
+{% block content %}
+	{% if isProcessing %}
+		{% if isProcessing == "draft" %}
+			{% set message = "Due to the large order size, we've added a job to the Queue Manager to create translation drafts" %}
+		{% elseif isProcessing == "publish" %}
+			{% set message = "Due to the large order size, we've added a job to the Queue Manager to publish translation drafts" %}
+		{% elseif isProcessing == "preview" %}
+			{% set message = "Due to the large order size, we've added a job to the Queue Manager to regenarate preview urls" %}
+		{% else %}
+			{% set message = "Due to the large file size, we've added a job to the Queue Manager to process the upload" %}
+		{% endif %}
+		<div class="translations-order-confirmation flex">
+			<div class="fullwidth readable">
+				<span style="font-size: 48px;line-height: 48px;">🚧</span>
+				<div class="thank-you">
+					<h2>Added job to queue</h2>
+					<p>{{ message }}</p>
+				</div>
+				<div class="instructions">
+					<p>This page should automatically refresh as soon as the job completes.</p>
+				</div>
+			</div>
+		</div>
+	{% else %}
+
+		{% include "translations/_components/orders/settings-tab" %}
+		{% include "translations/_components/orders/files-tab" %}
+
+		{% if order.requestQuote %}
+			{% include "translations/_components/orders/quote-tab" %}
+		{% endif %}
+
+	{% endif %}
+{% endblock %}
+
+{% block details %}
+	{% include "translations/_components/orders/info-tab" %}
+
+	<div id="meta-details" class="meta read-only">
+		<div class="data">
+			<div class="heading">
+				<label>Status</label>
+			</div>
+			<div class="value">
+                <span class="status {{ order.getStatusColour() }}"></span> {{ order.getStatusLabel()|t }}
+			</div>
+		</div>
+		<div class="data">
+			<div class="heading">
+				<span>Created At</span>
+			</div>
+			<div class="value">
+                <span> {{ order.dateOrdered ? order.dateOrdered|date('n/j/Y, H:i A') : 'N/A' }} </span>
+			</div>
+		</div>
+		<div class="data">
+			<div class="heading">
+				<span>Updated At</span>
+			</div>
+			<div class="value">
+                <span> {{ order.dateUpdated ? order.dateUpdated|date('n/j/Y, H:i A') : 'N/A' }} </span>
+			</div>
+		</div>
+	</div>
+	<hr>
+    <h3 class="heading"><b>{{ "Activity Log"|t('app') }}</b></h3>
+	<div class="data meta read-only activity-log">
+		<ul class="bullets">
+			{% if order.isPending() and not orderId %}
+                <li> {{ 'Pending submission'|t }} </li>
+			{% else %}
+				{% for log in order.activityLogArray %}
+                    <li>{{ log.date }} &ndash; {{ log.message }}</li>
+				{% endfor %}
+			{% endif %}
+		</ul>
+	</div>
+
+	{# Extra Form to facilitate files download using iframe #}
+	<div class="hidden" style="margin-top: 20px">
+
+		<form id="regenerate-preview-urls" class="utility" method="post" accept-charset="UTF-8">
+			{{ csrfInput() }}
+			{{ forms.hidden({
+				name: 'action',
+				value: 'translations/base/regenerate-preview-urls',
+			}) }}
+
+			{{ forms.hidden({
+				name: 'orderId',
+				value: order.id
+			}) }}
+
+			{{ forms.hidden({
+				name: 'isProcessing',
+				value: 'preview'
+			}) }}
+			</a>
+		</form>
+	</div>
+
+{% endblock %}
+
+{% set jsSettings = {
+    id: 'fields-tags',
+    name: 'tags',
+    tagGroupId: tagGroup.id,
+    sourceElementId: null,
+    targetSiteId: order.sourceSite
+} %}
+
+{% js %}
+new Craft.TagSelectInput({{ jsSettings|json_encode|raw }});
+{% endjs %}

@@ -1,0 +1,237 @@
+{% import '_includes/forms' as forms %}
+{% from "_includes/forms" import text %}
+
+<div id="order" class="{% if selectedTab|default(null) %} hidden {% endif %}">
+	<form method="post" id="order-form" class="translations-order-form" accept-charset="UTF-8">
+		{{ csrfInput() }}
+
+		{{ forms.hidden({
+			name: 'id',
+			value: orderId,
+		}) }}
+
+		{{ forms.hidden({
+				name: 'action',
+				value: 'translations/order/save-order',
+			}) }}
+
+		{{ forms.hidden({
+			name: 'sourceSite',
+			value: order.sourceSite,
+		}) }}
+
+		{{ forms.hidden({
+			name: 'updatedFields',
+			value: '',
+		}) }}
+
+		{{ forms.textField({
+			label: 'Order name <span class="required"/>'|t,
+			value: order.title,
+			placeholder: 'Translation order name',
+			name: 'title',
+			id: 'title',
+			class: isEditable,
+			maxlength: 255,
+		}) }}
+		<input type="hidden" id="originalTitle" value="{{ order.title }}">
+
+		{{ forms.selectField({
+			fieldClass: 'hidden',
+			label: 'Order Owner'|t,
+			value: null,
+			options: owners,
+			name: 'ownerId',
+			id: 'ownerId',
+			size: 20
+		}) }}
+		<hr>
+
+		{% include "translations/_components/_forms/order-entries-table" %}
+
+		<hr>
+
+		<div class="field">
+
+			<div class="heading">
+				<label class="required">{{ 'Source site'|t }}</label>
+			</div>
+			<div class="input {{ orientation }}">
+
+				{{ forms.selectField({
+					value: order.sourceSite,
+					options: {'':'Choose'|t ~ '...'}|merge(sites),
+					name: 'sourceSite',
+					id: 'sourceSite',
+					class: isEditable
+				}) }}
+				<input type="hidden" id="originalSourceSiteId" value="{{ order.sourceSite }}">
+			</div>
+		</div>
+
+		{{ forms.checkboxSelectField({
+			label: 'Target site(s) <span class="required"/>'|t,
+			options: sites,
+			values: order.targetSites|json_decode(),
+			showAllOption: true,
+			name: 'targetSites',
+			id: 'targetSites',
+			class: isEditable
+		}) }}
+
+		<input type="hidden" id="originalTargetSiteIds" value="{{ order.targetSites }}">
+
+		<hr>
+
+		{{ forms.selectField({
+			label: 'Translation service <span class="required"/>'|t,
+			value: order.translatorId,
+			options: translatorOptions,
+			name: 'translatorId',
+			id: 'translatorId',
+			class: isEditable,
+			size: 20
+		}) }}
+		<input type="hidden" id="originalTranslatorId" value="{{ order.translatorId }}" data-id="{{ defaultTranslatorId|default(0) }}">
+
+		<hr>
+
+		<a class="fieldtoggle collapsed" data-target="advance-fields" style="margin-bottom: 0; margin-top: -7px">Advanced</a>
+		<div id="advance-fields" class="field hidden" style="margin-top: 20px">
+			<div style="margin-bottom: 10px">
+				{{ forms.lightswitchField({
+					label: 'Track source content changes<p class="fw-400">\
+						Recommended for continuous translation workflows.</p>'|t('app'),
+					id: "trackChanges",
+					name: "trackChanges",
+					on: shouldTrackSourceContent is defined ? shouldTrackSourceContent : order.shouldTrackSourceContent
+				}) }}
+			</div>
+
+			<input type="hidden" id="originalTrackChanges" value="{{ order.trackChanges }}">
+
+			<div style="margin-bottom: 10px">
+				{{ forms.lightswitchField({
+					label: 'Track target content changes<p class="fw-400">\
+						Recomended when making changes to translated target content.</p>'|t('app'),
+					id: "trackTargetChanges",
+					name: "trackTargetChanges",
+					on: shouldTrackTargetContent is defined ? shouldTrackTargetContent : order.shouldTrackTargetContent
+				}) }}
+			</div>
+
+			<input type="hidden" id="originalTrackTargetChanges" value="{{ order.trackTargetChanges }}">
+
+			{% set includeTmFilesClass = "" %}
+			{% set includeTmFilesTitle = "" %}
+			{% if not order.isPending %}
+				{% set includeTmFilesClass = "non-editable disabled" %}
+				{% set includeTmFilesTitle = "This field cannot be edited." %}
+			{% endif %}
+			<span class="{{ includeTmFilesClass }}">
+				<div style="margin-bottom: 0" class="{% if includeTmFilesClass %} noClick {% endif %}" title="{{ includeTmFilesTitle }}">
+					{{ forms.lightswitchField({
+						label: 'Include translation memory alignment files<p class="fw-400">\
+							Include translation memory alignment files with order submission to prevent overwriting existing content edits.</p>'|t('app'),
+						id: "includeTmFiles",
+						name: "includeTmFiles",
+						class: "noClick",
+						on: order.includeTmFiles
+					}) }}
+				</div>
+			</span>
+
+			<input type="hidden" id="originalIncludeTmFiles" value="{{ order.includeTmFiles }}">
+
+			<div id="extra-fields" style="margin-top: 20px">
+				<span class="{{ includeTmFilesClass }}">
+					<div style="margin-bottom: 0" class="{% if includeTmFilesClass %} noClick {% endif %}" title="{{ includeTmFilesTitle }}">
+						{{ forms.lightswitchField({
+							label: 'Request a quote for this order<p class="fw-400">\
+								Quote will be provided and approval will be taken by translator before processing the order.</p>'|t('app'),
+							id: "requestQuote",
+							name: "requestQuote",
+							on: order.requestQuote
+						}) }}
+					</div>
+				</span>
+				<input type="hidden" id="originalQuoteRequest" value="{{ order.requestQuote }}">
+
+				{{ forms.dateField({
+					label: 'Requested due date'|t,
+					value: (order.requestedDueDate ? date(order.requestedDueDate) : null),
+					name: 'requestedDueDate',
+					id: 'requestedDueDate',
+					size: 20,
+					placeholder: 'Optional',
+				}) }}
+				<input type="hidden" id="originalRequestedDueDate" value="{{ date(order.requestedDueDate) | date('m/d/Y') }}">
+
+				{{ forms.textareaField({
+					label: 'Order notes'|t,
+					value: order.comments,
+					name: 'comments',
+					placeholder: 'Additional comments and instructions',
+					id: 'comments',
+					maxlength: 2000,
+					size: 20
+				}) }}
+				<input type="hidden" id="originalComments" value="{{ order.comments }}">
+
+				{% set orderTags = {} %}
+				<div id="fields" class="{{ isEditable }}">
+					<div id="tab-tag" class="flex-fields">
+						<div id="fields-tag-field" class="field width-100">
+							<div class="heading">
+								<label id="fields-tag-label" for="fields-tag">Order tags</label>
+							</div>
+							<div class="input ltr">
+								<div id="fields-tags" class="elementselect tagselect">
+									<div id="elementTags" class="elements">
+										{% if not order.getTags is empty %}
+											{% for tag in order.getTags %}
+												<div class="element small removable" data-editable="1" data-id="{{ tag.id }}" data-label="{{ tag.title }}">
+													<input type="hidden" name="tags[]" value="{{ tag.id }}"/>
+													<a class="delete icon custom-tag" data-label="{{ tag.title }}" data-id="{{ tag.id }}" title="Remove"></a>
+													<div class="label">
+														<span class="title">{{ tag.title }}</span>
+													</div>
+												</div>
+												{% set orderTags = orderTags|merge({(loop.index0):tag.title}) %}
+											{% endfor %}
+										{% endif %}
+									</div>
+									<div class="texticon add icon">
+										{{ text({
+											placeholder: 'Add a tag',
+											size: 10
+										}) }}
+										<div class="spinner hidden"></div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<input type="hidden" id="originalTags" value="{{ orderTags|join(',') }}">
+				<input type="hidden" id="tagGroupId" value="{{ tagGroup.id|default('') }}">
+			</div>
+		</div>
+
+		{# {{ forms.lightswitchField({
+			label: 'Asynchronous publishing<p class="fw-400">Creates a seprate translation draft \
+				for each target language that can be published independently.</p>'|t
+				(tag('button', {
+					type: 'button',
+					id: 'expand-status-btn',
+					class: ['btn'],
+					data: {
+						icon: 'ellipsis',
+					},
+				})),
+			id: "asynchronousPublishing",
+			name: "asynchronousPublishing",
+			on: order.asynchronousPublishing
+		}) }} #}
+	</form>
+</div>

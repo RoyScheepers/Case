@@ -1,0 +1,23 @@
+{% extends 'formie/_formfields/field' %}
+
+{% block field %}
+
+{% set id = 'new1' %}
+
+<div class="fui-group-field pane">
+    {% namespace "#{field.handle}[rows][#{id}][fields]" %}
+        {% for field in field.getFieldLayout().getCustomFields() %}
+            {% include 'formie/_formfields/group/field' with {
+                field: field,
+                required: field.required,
+                element: value.one() ?? null,
+            } only %}
+        {% endfor %}
+    {% endnamespace %}
+</div>
+
+{% namespace field.handle %}
+    {{ hiddenInput('sortOrder[]', id) }}
+{% endnamespace %}
+
+{% endblock %}

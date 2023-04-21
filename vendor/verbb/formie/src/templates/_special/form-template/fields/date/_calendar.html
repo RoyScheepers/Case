@@ -1,0 +1,20 @@
+{% fieldtag 'subFieldRows' %}
+    {% for row in field.getFrontEndSubfields(_context) %}
+        {% fieldtag 'subFieldRow' %}
+            {% for subField in row %}
+                {% set dateValue = null %}
+                
+                {% if subField.handle == 'date' %}
+                    {% set dateValue = value ? (value | date('Y-m-d', false)) : null %}
+                {% elseif subField.handle == 'time' %}
+                    {% set dateValue = value ? (value | date('H:i', false)) : null %}
+                {% endif %}
+
+                {{ craft.formie.renderField(form, subField, {
+                    element: element ?? null,
+                    value: dateValue ?? null,
+                }) }}
+            {% endfor %}
+        {% endfieldtag %}
+    {% endfor %}
+{% endfieldtag %}

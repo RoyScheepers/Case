@@ -1,0 +1,80 @@
+{% import '_includes/forms' as forms %}
+
+{% if field.displayType == 'calendar' %}
+    {% if field.getIsDate() or field.getIsDateTime() %}
+        {% include 'formie/_formfields/date/_date' %}
+    {% endif %}
+
+    {% if field.getIsTime() or field.getIsDateTime() %}
+        {% include 'formie/_formfields/date/_time' %}
+    {% endif %}
+{% endif %}
+
+{% if field.displayType == 'dropdowns' %}
+    {% namespace field.handle %}
+        <div class="fui-row">
+            {% for subField in field.getFrontEndSubfields(_context)[0] %}
+                <div class="fui-col-auto" style="flex: 0;">
+                    {% set dateValue = null %}
+                    {% set char = field.getFormattingChar(subField.handle) %}
+
+                    {% if subField.handle != 'ampm' %}
+                        {% set dateValue = value ? (value | date(char, false) * 1) : null %}
+                    {% endif %}
+
+                    {{ forms.selectField({
+                        label: subField.name,
+                        name: subField.handle,
+                        required: subField.required,
+                        placeholder: subField.placeholder,
+                        options: subField.options,
+                        value: dateValue,
+                    }) }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endnamespace %}
+{% endif %}
+
+{% if field.displayType == 'inputs' %}
+    {% namespace field.handle %}
+        <div class="fui-row">
+            {% for subField in field.getFrontEndSubfields(_context)[0] %}
+                {% set dateValue = null %}
+                {% set char = field.getFormattingChar(subField.handle) %}
+
+                {% if subField.handle != 'ampm' %}
+                    {% set dateValue = value ? (value | date(char, false) * 1) : null %}
+                {% endif %}
+
+                {% if subField.handle == 'ampm' %}
+                    <div class="fui-col-auto">
+                        {{ forms.selectField({
+                            label: subField.name,
+                            name: subField.handle,
+                            required: subField.required,
+                            placeholder: subField.placeholder,
+                            options: subField.options,
+                            value: dateValue,
+                        }) }}
+                    </div>
+                {% else %}
+                    <div class="fui-col-auto">
+                        {{ forms.textField({
+                            label: subField.name,
+                            name: subField.handle,
+                            required: subField.required,
+                            placeholder: subField.placeholder,
+                            value: dateValue,
+                            type: 'number',
+                            min: subField.min,
+                            max: subField.max,
+                            step: 1,
+                            pattern: '[0-9]+',
+                        }) }}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% endnamespace %}
+{% endif %}

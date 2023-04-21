@@ -1,0 +1,48 @@
+{
+    "name": "acclaro/translations",
+    "description": "Easily launch and manage multilingual Craft websites without having to copy/paste content or manually track updates.",
+    "type": "craft-plugin",
+    "keywords": [
+        "craft",
+        "cms",
+        "craftcms",
+        "craft-plugin",
+        "translations",
+        "multisite",
+        "multisite translations",
+        "translation plugin for craft"
+    ],
+    "support": {
+        "docs": "https://github.com/AcclaroInc/craft-translations/wiki",
+        "issues": "https://github.com/AcclaroInc/craft-translations/issues"
+    },
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Acclaro",
+            "homepage": "http://www.acclaro.com/"
+        }
+    ],
+    "require": {
+        "craftcms/cms": "^4.0.0",
+        "guzzlehttp/guzzle": "^7.0",
+        "composer/composer": "^2.1.9",
+		"spatie/guzzle-rate-limiter-middleware": "^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "acclaro\\translations\\": "src/"
+        }
+    },
+    "extra": {
+        "name": "Translations",
+        "handle": "translations",
+        "hasCpSection": true,
+        "changelogUrl": "https://github.com/AcclaroInc/craft-translations/master/CHANGELOG.md",
+        "documentationUrl": "https://github.com/AcclaroInc/craft-translations/wiki",
+        "components": {
+            "translationPluginForCraftService": "acclaro\\translations\\services\\TranslationsService"
+        },
+        "class": "acclaro\\translations\\Translations"
+    }
+}

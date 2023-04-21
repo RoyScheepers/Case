@@ -1,0 +1,11 @@
+includes:
+  - vendor/craftcms/phpstan/phpstan.neon
+parameters:
+  paths:
+    - src
+  level: 5
+  ignoreErrors:
+    - '#Call to an undefined method yii\\base\\Application.*#'
+    - '#Call to an undefined method yii\\base\\View.*#'
+    - '#Call to an undefined method yii\\console\\Request.*#'
+    - '#Call to an undefined method yii\\db\\Connection.*#'

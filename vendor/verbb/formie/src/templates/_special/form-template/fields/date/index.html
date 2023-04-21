@@ -1,0 +1,5 @@
+{% if field.useDatePicker and field.displayType == 'calendar' %}
+    {{ formieInclude('fields/date/_datepicker') }}
+{% else %}
+    {{ formieInclude(['fields/date/_' ~ field.displayType, 'fields/date/_calendar']) }}
+{% endif %}

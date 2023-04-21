@@ -1,0 +1,65 @@
+{% import '_includes/forms' as forms %}
+{% import 'translations/_components/_forms/button' as button %}
+
+<div class="recentorders-container scroll-x-auto">
+    {% if orders|length %}
+        <table class="data fullwidth table">
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Status</th>
+                <th style="text-align:right;">Date Ordered</th>
+            </tr>
+            {% for order in orders %}
+                <tr>
+                    <td>
+                        {{ order.id }}
+                    </td>
+                    <td>
+                        <a href="{{ order.getCpEditUrl() }}">{{ order.title }}</a>
+                    </td>
+                    <td>
+                        <span class="status {{order.getStatusColour()}}"></span>{{order.getStatusLabel()}}
+                        {{ order.getTargetAlertHtml()|raw }}
+                    </td>
+                    <td style="text-align:right;">
+                        <span class="light">
+                            {{ order.dateOrdered ? order.dateOrdered|date('M j, Y g:i a') : '--' }}
+                        </span>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+        <div class="buttons right">
+
+            {% set disabled = '' %}
+            {% if (orderCountAcclaro == 0) %}
+                {% set disabled = 'link-disabled' %}
+            {% endif %}
+
+            {{ button.anchorButton({
+                label: 'View all orders'|t('app'),
+                href: url('translations/orders')
+            }) }}
+
+            <form id="sync-orders" class="utility orders" method="post" accept-charset="UTF-8">
+                {{ forms.hidden({
+                    name: 'action',
+                    value: 'translations/order/sync-orders'
+                }) }}
+
+                {{ csrfInput() }}
+
+                {{ button.syncOrderButton(disabled) }}
+            </form>
+        </div>
+    {% else %}
+        <table class="data fullwidth table">
+            <tr>
+                <td>
+                    <p>{{ "No orders exist yet."|t('app') }}</p>
+                </td>
+            </tr>
+        </table>
+    {% endif %}
+</div>

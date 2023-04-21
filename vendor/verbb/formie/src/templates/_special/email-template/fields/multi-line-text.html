@@ -1,0 +1,15 @@
+<p>
+    {% if not (renderOptions.hideName ?? false) %}
+        <strong>{{ field.name | t('formie') }}</strong><br>
+    {% endif %}
+
+    {% if value %}
+        {% if field.useRichText %}
+            {{ value | raw }}
+        {% else %}
+            {{ value | nl2br }}
+        {% endif %}
+    {% else %}
+        {{ notification.getPlaceholder() }}
+    {% endif %}
+</p>

@@ -1,0 +1,11 @@
+<p>
+    {% if not (renderOptions.hideName ?? false) %}
+        <strong>{{ field.name | t('formie') }}</strong><br>
+    {% endif %}
+
+    {% if value %}
+        {{ value }}
+    {% else %}
+        {{ notification.getPlaceholder() }}
+    {% endif %}
+</p>

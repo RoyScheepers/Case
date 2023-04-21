@@ -1,0 +1,41 @@
+{
+  "name": "sebastianlenz/linkfield",
+  "description": "A Craft field type for selecting links",
+  "type": "craft-plugin",
+  "license": "MIT",
+  "require": {
+    "php": "^8.0",
+    "craftcms/cms": "^4.0.0-beta",
+    "sebastianlenz/craft-utils": "^3.0.2"
+  },
+  "require-dev": {
+    "craftcms/feed-me": "^5.0-dev",
+    "craftcms/phpstan": "dev-main",
+    "phpstan/phpstan": "^1.5",
+    "phpunit/phpunit": "^7.5 || ^8.0",
+    "verbb/super-table": "^3.0.0-beta"
+  },
+  "autoload": {
+    "classmap": ["legacy"],
+    "psr-4": {
+      "lenz\\linkfield\\": "src/"
+    }
+  },
+  "extra": {
+    "handle": "typedlinkfield",
+    "name": "Typed link field",
+    "developer": "Sebastian Lenz",
+    "developerUrl": "https://github.com/sebastian-lenz/"
+  },
+  "scripts": {
+    "test": "./vendor/bin/phpunit ./tests",
+    "testWithCoverage": "./vendor/bin/phpunit --coverage-html ./tests/coverage --whitelist ./src  ./tests"
+  },
+  "config": {
+    "allow-plugins": {
+      "yiisoft/yii2-composer": true,
+      "craftcms/plugin-installer": true
+    }
+  },
+  "minimum-stability": "dev"
+}

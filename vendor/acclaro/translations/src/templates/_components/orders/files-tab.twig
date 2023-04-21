@@ -1,0 +1,33 @@
+{% import '_includes/forms' as forms %}
+
+{% do view.registerAssetBundle("acclaro\\translations\\assetbundles\\FilePreviewAssets") %}
+
+<div id="files" class="{% if not (selectedTab|default(null) == 'files') %} hidden {% endif %}">
+	<div class="field">
+		<div class="heading">
+			<label id="files-label">
+				Files
+			</label>
+			<div class="btngroup submit ml-auto">
+				<div class="translations-loader hidden" style="margin-right:-30px"></div>
+
+				<div id='file-actions' class='btngroup flex flex-nowrap noClick disabled pr-10px'>
+					<div class="btn menubtn" data-icon='settings' title='Actions' id='file-actions-menu-icon'></div>
+				</div>
+
+				<input type="button" id="review" class="btn submit disabled form-submit border-left-radius-5px"
+					disabled="disabled" value="{{ 'Review changes'|t }}">
+			</div>
+		</div>
+	</div>
+	<div class="field input ltr scroll-x-auto">
+		{% if not order.isPending %}
+			{% set fileCheckboxProp = 'disabled' %}
+
+			{% include "translations/_components/_forms/order-files-table" %}
+
+		{% else %}
+			No files
+		{% endif %}
+	</div>
+</div>

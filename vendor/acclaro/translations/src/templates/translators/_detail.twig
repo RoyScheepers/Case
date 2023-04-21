@@ -1,0 +1,124 @@
+{% extends '_layouts/cp' %}
+{% import '_includes/forms' as forms %}
+
+{% do view.registerAssetBundle("acclaro\\translations\\assetbundles\\TranslatorAssets") %}
+
+{% set title = translator.label|default("Create a new translator") %}
+
+{% if (translatorId) %}
+    {% set defaultLabel = (translator.label) ? translator.label : "Export/Import" %}
+{% else %}
+    {% set defaultLabel = null %}
+{% endif %}
+
+{% block actionButton %}
+    <div class="btngroup">
+        {# Helps add action button from js #}
+    </div>
+{% endblock %}
+
+{% set crumbs = [
+    { label: 'Translations'|t, url: url('translations') },
+    { label: 'Translators'|t, url: url('translations/translators') },
+] %}
+
+{% block content %}
+    <form method="post" class="translations-translator-form" data-settings='{{labels}}' data-confirm-unload accept-charset="UTF-8">
+        {{ csrfInput() }}
+
+        {{ forms.hidden({
+            name: 'id',
+            value: translatorId,
+        }) }}
+
+        {{ forms.hidden({
+            name: 'flow',
+            value: "save",
+        }) }}
+
+        {{ forms.hidden({
+            name: 'status',
+            id: 'status',
+            value: translator.status ?: 'inactive',
+        }) }}
+
+        {{ forms.hidden({
+            name: 'action',
+            value: 'translations/translator/save'
+        }) }}
+
+        {{ forms.textField({
+            label: 'Title <span class="required"></span><span class="ml-5" data-icon="language"></span>'|t,
+            value: translator.label|default(defaultLabel),
+            name: 'label',
+            id: 'label',
+            class: "fullwidth",
+            placeholder: 'Add translator name'|t,
+        }) }}
+
+        <div class="flex field">
+            {{ forms.selectField({
+                label: 'Translation Service'|t,
+                options: {'':'Choose'|t ~ '...'}|merge(translationServices),
+                value: translator.service,
+                name: 'service',
+                id: 'service'
+            }) }}
+        </div>
+
+        <div class="translations-translator-settings bg-none">
+            <div id="settings-apiToken" class="hidden mb-1">
+                {{ forms.textField({
+                    label: 'API Key',
+                    value: translator.setting('apiToken'),
+                    name: 'settings[apiToken]',
+                    size: 20,
+                    class: 'api-token-field'
+                }) }}
+            </div>
+
+            <div id="settings-sandboxMode" class="hidden">
+                {{ forms.lightswitchField({
+                    label: 'Sandbox Mode'|t,
+                    on: translator.setting('sandboxMode'),
+                    name: 'settings[sandboxMode]'
+                }) }}
+            </div>
+        </div>
+    </form>
+{% endblock %}
+
+{% block details %}
+    <div id="meta-details" class="meta read-only">
+        <div class="data">
+            <div class="heading">
+                <label id="slug-label" for="slug">Status</label>
+            </div>
+            <div id="status-value" class="value">
+                {% if translator.status == "active" %}
+                    <span class="status green"></span> {{ 'Live'|t }}
+                {% elseif translator.status == "inactive" %}
+                    <span class="status red"></span> {{ 'Inactive'|t }}
+                {% else %}
+                    <span class="status"></span> {{ 'N/A'|t }}
+                {% endif %}
+            </div>
+        </div>
+        <div class="data">
+            <div class="heading">
+                <span id="slug-label" for="slug">Created At</span>
+            </div>
+            <div id="status-value" class="value">
+                <span> {{ translator.dateCreated ? translator.dateCreated|date('n/j/Y, H:i A') : 'N/A' }} </span>
+            </div>
+        </div>
+        <div class="data">
+            <div class="heading">
+                <span id="slug-label" for="slug">Updated At</span>
+            </div>
+            <div id="status-value" class="value">
+                <span> {{ translator.dateUpdated ? translator.dateUpdated|date('n/j/Y, H:i A') : 'N/A' }} </span>
+            </div>
+        </div>
+    </div>
+{% endblock %}

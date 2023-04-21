@@ -1,0 +1,151 @@
+{% extends "translations/_layouts/settings" %}
+{% import "_includes/forms" as forms %}
+
+{% set title = 'Configuration Options'|t %}
+
+{% block header %}
+    {{ parent() }}
+    {{ include('translations/_components/app-info') }}
+{% endblock %}
+
+{% set crumbs = [
+    { label: 'Translations'|t, url: url('translations') }
+] %}
+
+{% block content %}
+<div class="readable">
+    <h2>{{ "Configuration Options"|t('app') }}</h2>
+
+    <form id="" class="utility" method="post" accept-charset="UTF-8">
+        {{ csrfInput() }}
+        {{ forms.hidden({
+            name: 'action',
+            value: 'translations/settings/save-configuration-options',
+        }) }}
+
+        {{ forms.hidden({
+            id: 'original-values',
+            value: {
+                'chkDuplicateEntries': chkDuplicateEntries,
+                'trackSourceChanges': trackSourceChanges,
+                'trackTargetChanges': trackTargetChanges,
+                'apiLogging': apiLogging,
+            },
+        }) }}
+
+        <h3>{{ "General"|t('app') }}</h3>
+
+        {{ forms.lightswitchField({
+            first: true,
+            label: "Enable warnings for duplicate source entries"|t('app'),
+            instructions: "Displays a warning if the source entry already exists in another order."|t('app'),
+            id: 'chkDuplicateEntries',
+            name: 'chkDuplicateEntries',
+            on: chkDuplicateEntries,
+        }) }}
+
+        {{ forms.lightswitchField({
+            label: "Track source content changes by default"|t('app'),
+            instructions: "Enables the \"Track source content updates\" settings by default on new submission."|t('app'),
+            id: 'trackSourceChanges',
+            name: 'trackSourceChanges',
+            on: trackSourceChanges,
+        }) }}
+
+        {{ forms.lightswitchField({
+            label: "Track target content changes by default"|t('app'),
+            instructions: "Enables the \"Track target content updates\" settings by default on new submission."|t('app'),
+            id: 'trackTargetChanges',
+            name: 'trackTargetChanges',
+            on: trackTargetChanges,
+        }) }}
+
+        <hr>
+        <h3>{{ "Assets"|t('app') }}</h3>
+
+        {{ forms.selectField({
+            label: "Upload volume"|t('app'),
+            instructions: "Specify an Asset Volume to use for uploads."|t('app'),
+            id: 'uploadVolume',
+            name: 'uploadVolume',
+            options: volumeOptions,
+            value: uploadVolume ?? 0,
+            toggle: true
+        }) }}
+
+        <hr>
+        <h3>{{ "Static Translations"|t('app') }}</h3>
+
+        {{ forms.textField({
+            label: "Twig search filter (single quote)"|t('app'),
+            instructions: "Define a custom RegEx for filtering Twig strings."|t('app'),
+            placeholder: "Twig search filter (single quote)"|t('app'),
+            id: 'twigSearchFilterSingleQuote',
+            name: 'twigSearchFilterSingleQuote',
+            value: twigSearchFilterSingleQuote ?? '',
+            size: '40',
+        }) }}
+
+        {{ forms.textField({
+            label: "Twig search filter (double quote)"|t('app'),
+            instructions: "Define a custom RegEx for filtering Twig strings."|t('app'),
+            placeholder: "Twig search filter (double quote)"|t('app'),
+            id: 'twigSearchFilterDoubleQuote',
+            name: 'twigSearchFilterDoubleQuote',
+            value: twigSearchFilterDoubleQuote ?? '',
+            size: '40',
+        }) }}
+
+        {{ forms.textField({
+            label: "Target String Position"|t('app'),
+            instructions: "Define a custom RegEx position for filtering Twig strings."|t('app'),
+            placeholder: "Target String Position"|t('app'),
+            id: 'targetStringPosition',
+            name: 'targetStringPosition',
+            value: targetStringPosition ?? '',
+            size: '40',
+        }) }}
+
+        <hr>
+        <h3>{{ "Advanced"|t('app') }}</h3>
+
+        {{ forms.lightswitchField({
+            first: true,
+            label: "Enable debugging"|t('app'),
+            instructions: "Creates a translations log file to assist with troubleshooting."|t('app'),
+            id: 'apiLogging',
+            name: 'apiLogging',
+            on: apiLogging,
+        }) }}
+
+        <div class="buttons">
+            <input type="submit" id="save-configuration" class="btn" value="{{ "Save"|t('app') }}" />
+        </div>
+    </form>
+
+</div>
+{% endblock %}
+
+{% js %}
+    $( document ).ready(function() {
+        $('#chkDuplicateEntries, #apiLogging, #trackSourceChanges, #trackTargetChanges').change(function() {
+            if (isChanged()) {
+                $('#save-configuration').addClass('submit');
+            } else {
+                $('#save-configuration').removeClass('submit');
+            }
+        });
+
+        function isChanged() {
+            data = JSON.parse($(document).find('#original-values').val());
+            var $res = false;
+            $.each(data, function($element, original) {
+                current = $('input[name='+$element+']').val();
+                if (current != original) {
+                    $res = true;
+                }
+            });
+            return $res;
+        }
+    });
+{% endjs %}

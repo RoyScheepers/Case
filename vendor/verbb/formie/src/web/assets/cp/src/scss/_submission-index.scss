@@ -1,0 +1,81 @@
+/* Chart Explorer */
+
+.chart-explorer {
+    margin-bottom: 24px;
+    margin-right: 24px;
+    position: relative;
+}
+
+.chart-explorer .chart-header {
+    margin-bottom: 14px;
+    position: relative;
+}
+
+.chart-explorer .chart-header .date-range {
+    float: right;
+    width: auto;
+}
+
+body.rtl .chart-explorer .chart-header .date-range {
+    float: left;
+}
+
+.chart-explorer .chart-header .date-range .to {
+    padding: 0 7px;
+}
+
+.chart-explorer .chart-header .spinner {
+    position: absolute;
+    top: 0;
+}
+
+body.ltr .chart-explorer .chart-header .spinner {
+    right: -24px;
+}
+
+body.rtl .chart-explorer .chart-header .spinner {
+    left: -24px;
+}
+
+.chart-explorer .chart-container {
+    margin: 0 -24px -14px -24px;
+    position: relative;
+}
+
+.chart-explorer .chart-container .chart {
+    height: 200px;
+    margin: 0;
+}
+
+.chart-explorer .chart-container .error {
+    margin: 0 24px;
+}
+
+.chart-explorer .total .total-value {
+    font-size: 15px;
+}
+
+
+// ==========================================================================
+// Send Notification
+// ==========================================================================
+
+.fui-send-notification-modal .footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
+
+.fui-send-notification-modal .body {
+    position: relative;
+    height: 100%;
+    overflow: auto;
+    padding-bottom: 80px;
+}
+
+.fui-send-notification-modal .spinner.big {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: -24px 0 0 -24px;
+}

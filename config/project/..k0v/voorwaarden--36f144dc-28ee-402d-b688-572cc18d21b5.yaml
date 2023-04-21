@@ -1,0 +1,55 @@
+fieldLayouts:
+  43be4efb-9c14-412d-811b-6aec3dce84c3:
+    tabs:
+      -
+        elementCondition: null
+        elements:
+          -
+            autocapitalize: true
+            autocomplete: false
+            autocorrect: true
+            class: null
+            disabled: false
+            elementCondition: null
+            id: null
+            instructions: null
+            label: null
+            max: null
+            min: null
+            name: null
+            orientation: null
+            placeholder: null
+            readonly: false
+            requirable: false
+            size: null
+            step: null
+            tip: null
+            title: null
+            type: craft\fieldlayoutelements\entries\EntryTitleField
+            uid: 5599a053-e6b1-49c7-a55e-3e1b50249724
+            userCondition: null
+            warning: null
+            width: 100
+          -
+            elementCondition: null
+            fieldUid: 42ba97e6-8304-45bc-9fc7-c69cf07d793d # Algemenevoorwaarden 
+            instructions: null
+            label: null
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: 7630ade4-9f6b-48db-9f16-88b4004a2f54
+            userCondition: null
+            warning: null
+            width: 100
+        name: Content
+        uid: b77e2ecd-3086-4c46-b6ab-263865c75076
+        userCondition: null
+handle: voorwaarden
+hasTitleField: true
+name: 'Voorwaarden '
+section: 6611d210-e8e2-492d-9a7b-829ee16b727f # AlgemeneVoorwaarden
+sortOrder: 1
+titleFormat: null
+titleTranslationKeyFormat: null
+titleTranslationMethod: site

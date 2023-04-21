@@ -1,0 +1,16 @@
+{% if labelPosition.shouldDisplay(position) %}
+    {% fieldtag 'fieldLabel' %}
+        {{- field.name | t('formie') | raw -}}
+
+        {%- if field.required ?? required ?? false -%}
+            &nbsp;<span class="fui-required" aria-hidden="true">*</span>
+        {%- endif -%}
+
+        {# Allow extra content to be passed in #}
+        {%- set labelExtraContent = labelExtraContent ?? renderOptions.labelExtraContent ?? null -%}
+
+        {%- if labelExtraContent -%}
+            {{ labelExtraContent | raw }}
+        {%- endif -%}
+    {% endfieldtag %}
+{% endif %}
