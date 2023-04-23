@@ -48,7 +48,7 @@ class DefaultController extends Controller
    * api makne die generatie inlaadt gelinkt aan auto 
    * api maken die motortype inlaadt gelinkt aan auto 
    */
-  public $apiKey;
+ /* public $apiKey;
   public $apiBase;
   public function __construct($config = [])
   {
@@ -57,6 +57,8 @@ class DefaultController extends Controller
     $this->guzzleClient = new Client();
   }
 
+ 
+  
   public function actionIndex()
   {
     $apiURl = $this->guzzleClient->request('GET', $this->apiBase, [
@@ -66,5 +68,19 @@ class DefaultController extends Controller
       ]
     ]);
     return $apiURl;
+  }
+  
+  
+  
+  
+  */ 
+  public function actionIndex(){
+   return $this->asJson(
+        [
+          'success' => true,
+          'Car1' => 'audi',          
+          'Car2' => 'bmw',         
+        ]
+      );
   }
 };
