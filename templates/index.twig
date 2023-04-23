@@ -8,6 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0,
       maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <meta name="referrer" content="origin-when-cross-origin" />
+
   {% css alias('@web') ~ '/web/assets/' ~ 'styles.css' with {type: 'text/css'} %}
 </head>
 
@@ -19,8 +20,22 @@
           <div class="loader"></div>
         </div>
         <div id="formulier">
-          {% set form = craft.formie.forms.handle('findYourCar').all() %}
-          {{ craft.formie.renderForm('findYourCar') }}
+          <select id="cars" name="cars" class="custom__select">
+            <option value="0" > Kies uw Auto </option>
+            <option value="1">BMW</option>
+          </select>
+          <select id="model" name="model">
+            <option> Kies uw model </option>
+            <option value="318I">318I</option>
+          </select>
+          <select id="generatie" name="generatie">
+            <option> Kies de generatie </option>
+            <option value="2006">2006</option>
+          </select>
+          <select id="motortype" name="motortype">
+            <option> Kies uw motortype </option>
+            <option value="2.5">2.5</option>
+          </select>
         </div>
       </div>
     </div>
@@ -28,33 +43,32 @@
       <div class="card">
         <figure class="card__figure"> </figure>
         <div class="card__body">
-          <div class="card__header"> 
+          <div class="card__header">
             <h2> Koppel voor tunen: </h2>
-              <p>info uit api</p>
-            <h2>Koppel na tunen:  </h2>
-              <p>info uit api</p>
+            <p>info uit api</p>
+            <h2>Koppel na tunen: </h2>
+            <p>info uit api</p>
             <h2>vermogen na tunen: </h2>
-              <p>info uit api</p>
+            <p>info uit api</p>
             <h2>motorspecificaties: </h2>
             <ul>
               <li>
-              Cilinder inhoud:  info uit api
+                Cilinder inhoud: info uit api
               </li>
               <li>
-                Compressieverhouding:  info uit api
+                Compressieverhouding: info uit api
               </li>
               <li>
-                Type ecu:  info uit api
+                Type ecu: info uit api
               </li>
               <li>
-                Boring X slag:  info uit api
+                Boring X slag: info uit api
               </li>
               <li>
-                Motornummer:  info uit api
+                Motornummer: info uit api
               </li>
             </ul>
           </div>
-         
         </div>
       </div>
     </div>
