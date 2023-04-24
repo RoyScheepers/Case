@@ -23,7 +23,7 @@
           <div id="formulier">
             <select id="cars" name="cars" class="custom__select">
               <option value="0"> Kies uw Auto </option>
-              <option value="1"></option>
+              <option value="1">BMW</option>
             </select>
             <select id="model" name="model">
               <option> Kies uw model </option>
@@ -41,6 +41,7 @@
               Info
             </button>
           </div>
+          <p id="data" name="data"></p>
         </form>
       </div>
     </div>
@@ -91,17 +92,18 @@
         }))
         carField.forEach((a) => a.addEventListener('change', () => {
           if (carField.filter(carField => carField.value).length === carField.length) {
-            document.getElementById("loader__wrapper").classList.remove('hidden');
-            
-            fetch('/Api/available', {              
-              method: 'GET',
-              
-            }).then(response => response.json()).then((res) => {              
-              document.getElementById("loader__wrapper").classList.add('hidden');
-              if (res.success) {
-                let Cr
-                console.log(res.Car1);
-                console.log(res.Car2);
+            document.getElementById("loader__wrapper").classList.remove('hidden');         
+            fetch('/Api/available', {
+              method: 'GET',             
+                }).then(response => response.json()).then((res) => {              
+                  document.getElementById("loader__wrapper").classList.add('hidden');                   
+                  if (res.success) {                   
+                    let json_data = res;                   
+                    let result = [];
+                    for ( i in json_data){
+                      result.push([i, json_data[i]]);
+                    }
+                    console.log(result);
                 if (carField.filter(carField => carField.value).length === carField.length && allFields.filter(field => field.value).length === allFields.length) {
                   infoButton.forEach(e => e.disabled = false);
                 }               

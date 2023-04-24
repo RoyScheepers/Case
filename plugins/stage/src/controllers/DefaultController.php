@@ -43,12 +43,25 @@ class DefaultController extends Controller
    */
 
   /**
-   * api maken die een auto inlaadt   
-   * api maken die een model inlaadt gelinkt aan auto 
-   * api makne die generatie inlaadt gelinkt aan auto 
-   * api maken die motortype inlaadt gelinkt aan auto 
+   * verbinding maken met de api 
+   * auto's uit de api laden in php 
+   * modellen uit api laden in php
+   * generatie ui api laden in php 
+   * motor type uit api laden in php 
+   * 
+   * gegevens ombouwen zodat javaScript het in html kan inladen 
+   * event listener maken die de gegevens inlaadt in de drop down 
+   * 
+   * gegevens tonen in het tekst veld die bij de auto hoort 
+   * vermogen voor tunen uit api halen 
+   * vermogen na tunen uit api halen 
+   * koppel info voor tunen uit api halen 
+   * koppel info na tunen uit api halen 
+   * motor specs uit api halen 
    */
- /* public $apiKey;
+
+  /* 
+  public $apiKey;
   public $apiBase;
   public function __construct($config = [])
   {
@@ -79,8 +92,10 @@ class DefaultController extends Controller
         [
           'success' => true,
           'Car1' => 'audi',          
-          'Car2' => 'bmw',         
-        ]
+          'Car2' => 'bmw',  
+          'Thijn' => 'is de beste'       
+        ]      
       );
   }
 };
+
