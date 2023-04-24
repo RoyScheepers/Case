@@ -19,30 +19,30 @@
         <div class="loader__wrapper hidden" id="loader__wrapper">
           <div class="loader"></div>
         </div>
-        <form id="form" name="form">
-          <div id="formulier">
-            <select id="cars" name="cars" class="custom__select">
-              <option value="0"> Kies uw Auto </option>
-              <option value="1">BMW</option>
-            </select>
-            <select id="model" name="model">
-              <option> Kies uw model </option>
-              <option value="318I">318I</option>
-            </select>
-            <select id="generatie" name="generatie">
-              <option> Kies de generatie </option>
-              <option value="2006">2006</option>
-            </select>
-            <select id="motortype" name="motortype">
-              <option> Kies uw motortype </option>
-              <option value="2.5">2.5</option>
-            </select>
-            <button id="infoButton" name="infoButton" class="disabled">
-              Info
-            </button>
-          </div>
-          <p id="data" name="data"></p>
-        </form>
+        <div id="formulier">
+          <select id="cars" name="cars" class="custom__select">
+            <option> Kies uw merk </option>
+            <option value="audi">Audi</option>
+            <option value="bmw">Bmw</option>
+            <option value="seat">Seat</option>
+            <option value="volkswagen">Volkswagen</option>
+          </select>
+          <select id="model" name="model">
+            <option> Kies uw model </option>            
+          </select>
+          <select id="generatie" name="generatie">
+            <option> Kies de generatie </option>
+            <option value="2006">2006</option>
+          </select>
+          <select id="motortype" name="motortype">
+            <option> Kies uw motortype </option>
+            <option value="2.5">2.5</option>
+          </select>
+          <button id="infoButton" name="infoButton" class="disabled">
+            Info
+          </button>
+        </div>
+
       </div>
     </div>
     <div class="container">
@@ -92,28 +92,43 @@
         }))
         carField.forEach((a) => a.addEventListener('change', () => {
           if (carField.filter(carField => carField.value).length === carField.length) {
-            document.getElementById("loader__wrapper").classList.remove('hidden');         
-            fetch('/Api/available', {
-              method: 'GET',             
-                }).then(response => response.json()).then((res) => {              
-                  document.getElementById("loader__wrapper").classList.add('hidden');                   
-                  if (res.success) {                   
-                    let json_data = res;                   
-                    let result = [];
-                    for ( i in json_data){
-                      result.push([i, json_data[i]]);
+            document.getElementById("loader__wrapper").classList.remove('hidden');
+            fetch('/Api/available/makes', {
+              method: 'GET',
+            }).then(response => response.json()).then((res) => {
+              document.getElementById("loader__wrapper").classList.add('hidden');
+              if (res) {
+                var data = [];
+                var dataSet = [];
+                res.forEach((val, index) => {
+                  if (res[index] !== null) {
+                    for (var i in res[index]) {
+                      data.push(res[index][i]);
                     }
-                    console.log(result);
+                    dataSet.push(data);
+                    data = [];
+                  }
+                })
+                console.log(JSON.stringify(dataSet));
+                dataSet.forEach((el) => {
+                  const select = document.getElementById('model');
+                  const option = document.createElement('option');
+                  option.text = el[1];
+                  select.add(option);
+                })
+
+
+
+
                 if (carField.filter(carField => carField.value).length === carField.length && allFields.filter(field => field.value).length === allFields.length) {
                   infoButton.forEach(e => e.disabled = false);
-                }               
+                }
               } else if (res.fail) {
                 Submit.forEach(e => e.disabled = true);
                 document.getElementById("loader__wrapper").classList.add('hidden');
-                
               }
             })
-          } 
+          }
         })
         )
       }
