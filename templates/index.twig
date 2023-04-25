@@ -4,7 +4,7 @@
 <head>
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta charset="utf-8" />
-  <title>{{ docTitle ?? siteName }}</title>
+  <title>Websteen</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0,
       maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <meta name="referrer" content="origin-when-cross-origin" />
@@ -21,28 +21,25 @@
         </div>
         <div id="formulier">
           <select id="cars" name="cars" class="custom__select">
-            <option> Kies uw merk </option>
-            <option value="audi">Audi</option>
-            <option value="bmw">Bmw</option>
-            <option value="seat">Seat</option>
-            <option value="volkswagen">Volkswagen</option>
+            <option value="1" disabled hidden selected>Kies uw merk</option>
+            <option value="2">Audi</option>
+            <option value="4">Bmw</option>
+            <option value="13">Seat</option>
+            <option value="17">Volkswagen</option>
           </select>
           <select id="model" name="model">
-            <option> Kies uw model </option>            
+            <option value="1" disabled hidden selected> Kies uw model </option>
           </select>
           <select id="generatie" name="generatie">
-            <option> Kies de generatie </option>
-            <option value="2006">2006</option>
+            <option value="1" disabled hidden selected> Kies de generatie </option>
           </select>
           <select id="motortype" name="motortype">
-            <option> Kies uw motortype </option>
-            <option value="2.5">2.5</option>
+            <option value="1" disabled hidden selected> Kies uw motortype </option>
           </select>
-          <button id="infoButton" name="infoButton" class="disabled">
+          <button type="submit" id="infoButton" name="infoButton" class="disabled">
             Info
           </button>
         </div>
-
       </div>
     </div>
     <div class="container">
@@ -50,12 +47,18 @@
         <figure class="card__figure"> </figure>
         <div class="card__body">
           <div class="card__header">
-            <h2> Koppel voor tunen: </h2>
-            <p>info uit api</p>
-            <h2>Koppel na tunen: </h2>
-            <p>info uit api</p>
-            <h2>vermogen na tunen: </h2>
-            <p>info uit api</p>
+            <div id="power_standaard">
+              <h2>Vermogen voor tunen: </h2>
+            </div>
+            <div id="power_stage_1">
+              <h2>Vermogen na tunen: </h2>
+            </div>
+            <div id="torque_standaard">
+              <h2> Koppel voor tunen: </h2>
+            </div>
+            <div id="torque_stage_1">
+              <h2>Koppel na tunen: </h2>
+            </div>
             <h2>motorspecificaties: </h2>
             <ul>
               <li>
@@ -81,59 +84,149 @@
 
     <script>
       (() => {
-        const allFields = Array.from(document.querySelectorAll('[name="cars"],[name="model"],[name="generatie"],[name="motortype"]'));
+        // creates values and models for dropdown field "kies uw model"
+
         const carField = Array.from(document.querySelectorAll('[name="cars"]'));
-        const infoButton = Array.from(document.querySelector('[name="infoButton"]'));
+        const infoButton = Array.from(document.querySelectorAll('[name="infoButton"]'));
         infoButton.forEach(e => e.disabled = true);
-        carField.forEach((el) => el.addEventListener('change', () => {
-          if (el.value === "") {
-            infoButton.forEach(e => e.disabled = true);
-          }
-        }))
         carField.forEach((a) => a.addEventListener('change', () => {
+          const carValue = a.value;
           if (carField.filter(carField => carField.value).length === carField.length) {
             document.getElementById("loader__wrapper").classList.remove('hidden');
-            fetch('/Api/available/makes', {
+            fetch(`/Api/available/models/${carValue}`, {
               method: 'GET',
-            }).then(response => response.json()).then((res) => {
+            }).then(response => response.json()).then((carRes) => {
               document.getElementById("loader__wrapper").classList.add('hidden');
-              if (res) {
-                var data = [];
-                var dataSet = [];
-                res.forEach((val, index) => {
-                  if (res[index] !== null) {
-                    for (var i in res[index]) {
-                      data.push(res[index][i]);
+              if (carRes) {
+                let carData = [];
+                let carDataSet = [];
+                carRes.forEach((val, index) => {
+                  if (carRes[index] !== null) {
+                    for (let i in carRes[index]) {
+                      carData.push(carRes[index][i]);
                     }
-                    dataSet.push(data);
-                    data = [];
+                    carDataSet.push(carData);
+                    carData = [];
                   }
                 })
-                console.log(JSON.stringify(dataSet));
-                dataSet.forEach((el) => {
+                carDataSet.forEach((el) => {
                   const select = document.getElementById('model');
                   const option = document.createElement('option');
                   option.text = el[1];
+                  option.value = el[0];
                   select.add(option);
                 })
-
-
-
-
-                if (carField.filter(carField => carField.value).length === carField.length && allFields.filter(field => field.value).length === allFields.length) {
-                  infoButton.forEach(e => e.disabled = false);
-                }
-              } else if (res.fail) {
-                Submit.forEach(e => e.disabled = true);
-                document.getElementById("loader__wrapper").classList.add('hidden');
               }
             })
           }
         })
         )
+        // creates values and generations for dropdown field "kies de generatie"
+        const modelField = Array.from(document.querySelectorAll('[name="model"]'));
+        modelField.forEach((a) => a.addEventListener('change', () => {
+          const modelValue = a.value;
+          if (modelField.filter(modelField => modelField.value).length === modelField.length) {
+            document.getElementById("loader__wrapper").classList.remove('hidden');
+            fetch(`Api/available/makesgeneration/${modelValue}`, {
+              method: 'GET',
+            }).then(response => response.json()).then((modelRes) => {
+              document.getElementById("loader__wrapper").classList.add('hidden');
+              if (modelRes) {
+                let modelData = [];
+                let modelDataSet = [];
+                modelRes.forEach((val, index) => {
+                  if (modelRes[index] !== null) {
+                    for (let i in modelRes[index]) {
+                      modelData.push(modelRes[index][i]);
+                    }
+                    modelDataSet.push(modelData);
+                    modelData = [];
+                  }
+                })
+                
+                modelDataSet.forEach((el) => {
+                  const select = document.getElementById('generatie');
+                  const option = document.createElement('option');
+                  option.text = el[1];
+                  option.value = el[0];
+                  select.add(option);
+                })
+              }
+            })
+          }
+        }))
+        // creates values and engines for dropdown field "kies uw motortype"
+        const generationField = Array.from(document.querySelectorAll('[name="generatie"]'));
+        generationField.forEach((a) => a.addEventListener('change', () => {
+          const generationValue = a.value;
+          if (generationField.filter(generationField => generationField.value).length === generationField.length) {
+            document.getElementById("loader__wrapper").classList.remove('hidden');
+            fetch(`Api/available/makesenginetype/${generationValue}`, {
+              method: 'GET',
+            }).then(response => response.json()).then((generationRes) => {
+              document.getElementById("loader__wrapper").classList.add('hidden');
+              if (generationRes) {
+                let generationData = [];
+                let generationDataSet = [];
+                generationRes.forEach((val, index) => {
+                  if (generationRes[index] !== null) {
+                    for (let i in generationRes[index]) {
+                      generationData.push(generationRes[index][i]);
+                    }
+                    generationDataSet.push(generationData);
+                    generationData = [];
+                  }
+                })
+                generationDataSet.forEach((el) => {
+                  const select = document.getElementById('motortype');
+                  const option = document.createElement('option');
+                  option.text = el[1];
+                  option.value = el[0];
+                  select.add(option);
+                })
+              }
+            })
+          }
+        }
+        )
+        )
+
+        const enginetypeField = Array.from(document.querySelectorAll('[name="motortype"]'));
+        enginetypeField.forEach((a) => a.addEventListener('change', () => {
+          const el = document.getElementById("motortype");
+          const engineValue = el.value;
+        }))
+        // eventlisteren for the submit button 
+        infoButton.forEach((a) => a.addEventListener('click', () => {
+          const enginetypeEl = document.getElementById("motortype");
+          const enginetypeValue = enginetypeEl.value;
+          fetch(`Api/available/makesecutype/${enginetypeValue}`, {
+            method: 'GET',
+          }).then(response => response.json()).then((ecuRes) => {
+             
+                
+            ecuRes.forEach((el, val ) => {                   
+              const option = document.createElement("p");
+                const node = document.createTextNode(el);
+                option.appendChild(node);
+                const element = document.getElementById(val);
+                element.appendChild(option);
+            })
+          })
+        }))
+        if (modelField) {
+          infoButton.forEach(e => e.disabled = false);
+        } else {
+          infoButton.forEach(e => e.disabled = true);
+          document.getElementById("loader__wrapper").classList.add('hidden');
+        }
+
+
       }
       )();
+
     </script>
+
 </body>
 
 </html>
