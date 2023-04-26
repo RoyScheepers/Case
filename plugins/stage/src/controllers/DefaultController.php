@@ -43,16 +43,15 @@ class DefaultController extends Controller
   public $apiBase;
  
 
-  public function actionModels($carId)
+
+  public function actionModels($modelId)
   {
     // to fetch models you need the id of a make 
     // fetches models from api and builds it to a json array containing id and name of a models
     // for testing use this URL:https://local.websteen.nl/Api/available/models/2
-
-    $modelId = $carId;
     $this->apiBase = 'https://api.dyno-chiptuningfiles.com/v1/makes/' . $modelId . '/models?power_type=pk';
     $this->apiKey = App::env('WEBSTEEN_API_KEY');
-    $client = new Client();
+     $client = new Client();
 
     $infoResponse = $client->request('GET', $this->apiBase, [
       'headers' => [
@@ -68,13 +67,12 @@ class DefaultController extends Controller
     return json_encode($carArray);
   }
 
-  public function actionMakesgeneration($modelId)
+  public function actionMakesgeneration($generationId)
   {
     // to fetch a generation you need the id of a model 
     // fetches generations of a model from api and builds it to a json array containing id and name of a model
-    // for testing use this URL:https://local.websteen.nl/Api/available/makesgeneration/631
-    $genId = $modelId;
-    $this->apiBase = 'https://api.dyno-chiptuningfiles.com/v1/models/' . $genId . '/generations?power_type=pk';
+    // for testing use this URL:https://local.websteen.nl/Api/available/makesgeneration/631    
+    $this->apiBase = 'https://api.dyno-chiptuningfiles.com/v1/models/' . $generationId . '/generations?power_type=pk';
     $this->apiKey = App::env('WEBSTEEN_API_KEY');
     $client = new Client();
 
@@ -92,13 +90,12 @@ class DefaultController extends Controller
     return json_encode($generationArray);
   }
 
-  public function actionMakesenginetype($generationId)
+  public function actionMakesenginetype($engineId)
   {
     // to fetch a enginetype you need the id of a generation
     // fetches engine of a model's generation from api and builds it to a json array containing id and name of a generation
-    // for testing use this URL: https://local.websteen.nl/Api/available/makesenginetype/972
-    $engId = $generationId;
-    $this->apiBase = 'https://api.dyno-chiptuningfiles.com/v1/generations/' . $engId . '/engines?power_type=pk';
+    // for testing use this URL: https://local.websteen.nl/Api/available/makesenginetype/972  
+    $this->apiBase = 'https://api.dyno-chiptuningfiles.com/v1/generations/' . $engineId . '/engines?power_type=pk';
     $this->apiKey = App::env('WEBSTEEN_API_KEY');
     $client = new Client();
 
@@ -116,12 +113,11 @@ class DefaultController extends Controller
     return json_encode($engineArray);
   }
 
-  public function actionGetecu($engineId)
+  public function actionGetecu($ecuId)
   {
     // to fetch a ecu and engine specs you need the id of a engine
     // fetches ecu's and specs of an engine from api and builds it to a json array containing id and name of a generation
     // for testing use this URL: https://local.websteen.nl/Api/available/makesecutype/5839
-    $ecuId = $engineId;
     $this->apiBase = 'https://api.dyno-chiptuningfiles.com/v1/engines/' . $ecuId . '/ecus?power_type=pk';
     $this->apiKey = App::env('WEBSTEEN_API_KEY');
     $client = new Client();

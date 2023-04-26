@@ -21,20 +21,20 @@
         </div>
         <div id="formulier">
           <select id="cars" name="cars" class="custom__select">
-            <option value="1" disabled hidden selected>Kies uw merk</option>
+            <option value="1">Kies uw merk</option>
             <option value="2">Audi</option>
             <option value="4">Bmw</option>
             <option value="13">Seat</option>
             <option value="17">Volkswagen</option>
           </select>
           <select id="model" name="model">
-            <option selected> Kies uw model </option>
+            <option> Kies uw model </option>
           </select>
           <select id="generatie" name="generatie">
-            <option selected> Kies de generatie </option>
+            <option> Kies de generatie </option>
           </select>
           <select id="motortype" name="motortype">
-            <option selected> Kies uw motortype </option>
+            <option> Kies uw motortype </option>
           </select>
           <button type="submit" id="infoButton" name="infoButton">
             Info
@@ -47,156 +47,185 @@
         <figure class="card__figure"> </figure>
         <div class="card__body">
           <div class="card__header">
-            <h2>Vermogen voor tunen: </h2>
-            <div id="power_standaard">
+            <div>
+              <h2>Vermogen voor tunen: </h2>
+              <div id="power_standaard" name="power_standaard">
+              </div>
+              <div>
+                <p>Pk</p>
+              </div>
             </div>
-            <h2>Vermogen na tunen: </h2>
-            <div id="power_stage_1">
+            <div>
+              <h2>Vermogen na tunen: </h2>
+              <div id="power_stage_1" name="power_stage_1">
+              </div>
+              <div>
+                <p>Pk</p>
+              </div>
             </div>
-            <h2> Koppel voor tunen: </h2>
-            <div id="torque_standaard">
+            <div>
+              <h2> Koppel voor tunen: </h2>
+              <div id="torque_standaard" name="torque_standaard">
+              </div>
+              <div>
+                <p>Pk</p>
+              </div>
             </div>
-            <h2>Koppel na tunen: </h2>
-            <div id="torque_stage_1">
+            <div>
+              <h2>Koppel na tunen: </h2>
+              <div id="torque_stage_1" name="torque_stage_1">
+              </div>
+              <div>
+                <p>Nm</p>
+              </div>
             </div>
-            <h2>Cilinder inhoud:</h2>
-            <div id="cylinder_capacity">
+            <div>
+              <h2>Cilinder inhoud:</h2>
+              <div id="cylinder_capacity" name="cylinder_capacity">
+                <div>
+                  <p>CC</p>
+                </div>
+              </div>
             </div>
-            <h2>Compressieverhouding:</h2>
-            <div id="compression_ratio">
+            <div>
+              <h2>Compressieverhouding:</h2>
+              <div id="compression_ratio" name="compression_ratio">
+              </div>
+              <div>
+                <p>Nm</p>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
+  </div>
 
-    <script>
-      (() => {
-        // creates values and models for dropdown field "kies uw model"
-        const infoButton = Array.from(document.querySelectorAll('[name="infoButton"]'));
-        const modelEl = document.getElementById('model');
-        const generationEl = document.getElementById('generatie');
-        const engineEl = document.getElementById('motortype');
-        document.querySelectorAll('[name="cars"]').forEach((a) => a.addEventListener('click', () => {
-          const carValue = a.value;
-          document.getElementById("loader__wrapper").classList.remove('hidden');
-          fetch(`/Api/available/models/${carValue}`, {
-            method: 'GET',
-          }).then(response => response.json()).then((carRes) => {
-            const carDataSet = JsonToArray(carRes)
-            const myPromise = new Promise((resolve, reject) => {
-              if (modelEl.childNodes.length >= 1) {
-                deleteOptionEl(modelEl);
-              }
-            });
-            myPromise.then(deleteOptionEl(generationEl)).then(deleteOptionEl(engineEl))
-            carDataSet.forEach((el) => {
-              CreateOptionEl(modelEl, el[1], el[0])
-            })
-            document.getElementById("loader__wrapper").classList.add('hidden');
-          })
-        }))
-        // creates values and generations for dropdown field "kies de generatie"        
-        document.querySelectorAll('[name="model"]').forEach((a) => a.addEventListener('click', () => {
-          const modelValue = a.value;
-          document.getElementById("loader__wrapper").classList.remove('hidden');
-          fetch(`Api/available/makesgeneration/${modelValue}`, {
-            method: 'GET',
-          }).then(response => response.json()).then((modelRes) => {
-            const modelDataSet = JsonToArray(modelRes);
-            const myPromise = new Promise((resolve, reject) => {
-              if (generationEl.childNodes.length >= 1) {
-                deleteOptionEl(generationEl);
-              }
-            });
-            myPromise.then(deleteOptionEl(engineEl))
-            modelDataSet.forEach((el) => {
-              CreateOptionEl(generationEl, el[1], el[0]);
-            })
-            document.getElementById("loader__wrapper").classList.add('hidden');
-          })
-        }))
-        // creates values and engines for dropdown field "kies uw motortype"
-        document.querySelectorAll('[name="generatie"]').forEach((a) => a.addEventListener('click', () => {
-          const generationValue = a.value;
-          document.getElementById("loader__wrapper").classList.remove('hidden');
-          fetch(`Api/available/makesenginetype/${generationValue}`, {
-            method: 'GET',
-          }).then(response => response.json()).then((generationRes) => {
-            const generationDataSet = JsonToArray(generationRes)
-            deleteOptionEl(engineEl);
-            generationDataSet.forEach((el) => {
-              CreateOptionEl(engineEl, el[1], el[0])
-            })
-            document.getElementById("loader__wrapper").classList.add('hidden');
-          })
-        }))
-        // creates list of engine specs         
-        infoButton.forEach((a) => a.addEventListener('click', () => {
-          const enginetypeValue = engineEl.value;
-          fetch(`Api/available/makesecutype/${enginetypeValue}`, {
-            method: 'GET',
-          }).then(response => response.json()).then((ecuRes) => {
-            const arr = Object.entries(ecuRes[0])
-            arr.forEach((el) => {
-              const select = document.getElementById(el[0]);
-              deleteOptionEl(select)
-              CreateTextEl(el[0], el[1])
-            })
-            document.getElementById("infoButton").disabled = false;
-          })
-        }))
+  <script>
+    (() => {
 
-        JsonToArray = (el) => {
-          let Data = [];
-          let DataSet = [];
-          el.forEach((val, index) => {
-            if (el[index] !== null) {
-              for (let i in el[index]) {
-                Data.push(el[index][i]);
-              }
-              DataSet.push(Data);
-              Data = [];
-            }
+      // creates values and models for dropdown field "kies uw model"
+      const infoButton = Array.from(document.querySelectorAll('[name="infoButton"]'));
+      const modelEl = document.getElementById('model');
+      const generationEl = document.getElementById('generatie');
+      const engineEl = document.getElementById('motortype');
+      document.querySelectorAll('[name="cars"]').forEach((a) => a.addEventListener('click', () => {
+        const carValue = a.value;
+        document.getElementById("loader__wrapper").classList.remove('hidden');
+        fetch(`/Api/available/models/${carValue}`, {
+          method: 'GET',
+        }).then(response => response.json()).then((carRes) => {
+          const carDataSet = JsonToArray(carRes)
+          promiseFunc(modelEl)
+            .then(deleteOptionEl(generationEl))
+            .then(deleteOptionEl(engineEl))
+            .then(CreateOptionEl(generationEl, 'Kies uw generatie', ''))
+            .then(CreateOptionEl(engineEl, 'Kies uw motortype', ''))
+          carDataSet.forEach((el) => {
+            CreateOptionEl(modelEl, el[1], el[0])
           })
-          return DataSet;
-        }
-
-        CreateOptionEl = (el, textEl, valEl) => {
-          const select = el;
-          const option = document.createElement('option');
-          option.text = textEl;
-          option.value = valEl;
-          select.add(option);
-        }
-
-        CreateTextEl = (i, el) => {
-          const option = document.createElement("p");
-          const node = document.createTextNode(el);
-          option.appendChild(node);
-          const element = document.getElementById(i);
-          element.appendChild(option);
-        }
-
-        deleteOptionEl = (el) => {
-          while (el.childNodes.length >= 1) {
-            el.removeChild(el.firstChild);
+          document.getElementById("loader__wrapper").classList.add('hidden');
+        })
+      }))
+      // creates values and generations for dropdown field "kies de generatie"        
+      document.querySelectorAll('[name="model"]').forEach((a) => a.addEventListener('click', () => {
+        const modelValue = a.value;
+        document.getElementById("loader__wrapper").classList.remove('hidden');
+        fetch(`Api/available/makesgeneration/${modelValue}`, {
+          method: 'GET',
+        }).then(response => response.json()).then((modelRes) => {
+          const modelDataSet = JsonToArray(modelRes);
+          promiseFunc(generationEl)
+            .then(deleteOptionEl(engineEl))
+            .then(CreateOptionEl(engineEl, 'Kies uw motortype', ''))
+          modelDataSet.forEach((el) => {
+            CreateOptionEl(generationEl, el[1], el[0]);
+          })
+          document.getElementById("loader__wrapper").classList.add('hidden');
+        })
+      }))
+      // creates values and engines for dropdown field "kies uw motortype"
+      document.querySelectorAll('[name="generatie"]').forEach((a) => a.addEventListener('click', () => {
+        const generationValue = a.value;
+        document.getElementById("loader__wrapper").classList.remove('hidden');
+        fetch(`Api/available/makesenginetype/${generationValue}`, {
+          method: 'GET',
+        }).then(response => response.json()).then((generationRes) => {
+          const generationDataSet = JsonToArray(generationRes)
+          deleteOptionEl(engineEl);
+          generationDataSet.forEach((el) => {
+            CreateOptionEl(engineEl, el[1], el[0])
+          })
+          document.getElementById("loader__wrapper").classList.add('hidden');
+        })
+      }))
+      // creates list of engine specs         
+      infoButton.forEach((a) => a.addEventListener('click', () => {
+        const enginetypeValue = engineEl.value;
+        fetch(`Api/available/makesecutype/${enginetypeValue}`, {
+          method: 'GET',
+        }).then(response => response.json()).then((ecuRes) => {
+          const arr = Object.entries(ecuRes[0])
+          arr.forEach((el) => {
+            const select = document.getElementById(el[0]);
+            deleteOptionEl(select)
+            CreateTextEl(el[0], el[1])
+          })
+          document.getElementById("infoButton").disabled = false;
+        })
+      }))
+      promiseFunc = (el) => {
+        const myPromise = new Promise((resolve, reject) => {
+          if (el.childNodes.length >= 1) {
+            deleteOptionEl(el);
           }
-        }
-
-        deleteAll = (el) => {
-           const myPromise = new Promise((resolve, reject) => {
-            if (el.childNodes.length >= 1) {
-              deleteOptionEl(el);
+        });
+        return myPromise;
+      }
+      JsonToArray = (el) => {
+        let Data = [];
+        let DataSet = [];
+        el.forEach((val, index) => {
+          if (el[index] !== null) {
+            for (let i in el[index]) {
+              Data.push(el[index][i]);
             }
-            return myPromise
-          });
+            DataSet.push(Data);
+            Data = [];
+          }
+        })
+        return DataSet;
+      }
+
+      CreateOptionEl = (el, textEl, valEl) => {
+        const select = el;
+        const option = document.createElement('option');
+        option.text = textEl;
+        option.value = valEl;
+        select.add(option);
+      }
+
+      CreateTextEl = (i, el) => {
+        const option = document.createElement("p");
+        const node = document.createTextNode(el);
+        option.appendChild(node);
+        const element = document.getElementById(i);
+        element.appendChild(option);
+      }
+
+      deleteOptionEl = (el) => {
+        while (el.childNodes.length >= 1) {
+          el.removeChild(el.firstChild);
         }
       }
 
-      )();
 
-    </script>
+
+    }
+
+    )();
+
+  </script>
 
 </body>
 
