@@ -28,15 +28,15 @@
             <option value="17">Volkswagen</option>
           </select>
           <select id="model" name="model">
-            <option disabled hidden selected> Kies uw model </option>
+            <option selected> Kies uw model </option>
           </select>
           <select id="generatie" name="generatie">
-            <option disabled hidden selected> Kies de generatie </option>
+            <option selected> Kies de generatie </option>
           </select>
           <select id="motortype" name="motortype">
-            <option disabled hidden selected> Kies uw motortype </option>
+            <option selected> Kies uw motortype </option>
           </select>
-          <button type="submit" id="infoButton" name="infoButton" class="disabled">
+          <button type="submit" id="infoButton" name="infoButton">
             Info
           </button>
         </div>
@@ -73,143 +73,127 @@
     <script>
       (() => {
         // creates values and models for dropdown field "kies uw model"
-        const carField = Array.from(document.querySelectorAll('[name="cars"]'));
-        const infoButton = Array.from(document.querySelectorAll('[name="infoButton"]'));      
-        //infoButton.forEach(e => e.disabled = true);
-        carField.forEach((a) => a.addEventListener('change', () => {
+        const infoButton = Array.from(document.querySelectorAll('[name="infoButton"]'));
+        const modelEl = document.getElementById('model');
+        const generationEl = document.getElementById('generatie');
+        const engineEl = document.getElementById('motortype');
+        document.querySelectorAll('[name="cars"]').forEach((a) => a.addEventListener('click', () => {
           const carValue = a.value;
-          if (carField.filter(carField => carField.value).length === carField.length) {
-            document.getElementById("loader__wrapper").classList.remove('hidden');
-            fetch(`/Api/available/models/${carValue}`, {
-              method: 'GET',
-            }).then(response => response.json()).then((carRes) => {
-              document.getElementById("loader__wrapper").classList.add('hidden');
-              if (carRes) {
-                let carData = [];
-                let carDataSet = [];
-                carRes.forEach((val, index) => {
-                  if (carRes[index] !== null) {
-                    for (let i in carRes[index]) {
-                      carData.push(carRes[index][i]);
-                    }
-                    carDataSet.push(carData);
-                    carData = [];
-                  }
-                })
-                carDataSet.forEach((el) => {
-                  const select = document.getElementById('model');
-                  const option = document.createElement('option');
-                  option.text = el[1];
-                  option.value = el[0];
-                  select.add(option);
-                })
+          document.getElementById("loader__wrapper").classList.remove('hidden');
+          fetch(`/Api/available/models/${carValue}`, {
+            method: 'GET',
+          }).then(response => response.json()).then((carRes) => {
+            const carDataSet = JsonToArray(carRes)
+            const myPromise = new Promise((resolve, reject) => {
+              if (modelEl.childNodes.length >= 1) {
+                deleteOptionEl(modelEl);
               }
+            });
+            myPromise.then(deleteOptionEl(generationEl)).then(deleteOptionEl(engineEl))
+            carDataSet.forEach((el) => {
+              CreateOptionEl(modelEl, el[1], el[0])
             })
-          }
-        })
-        )
-        // creates values and generations for dropdown field "kies de generatie"
-        const modelField = Array.from(document.querySelectorAll('[name="model"]'));
-        modelField.forEach((a) => a.addEventListener('change', () => {
+            document.getElementById("loader__wrapper").classList.add('hidden');
+          })
+        }))
+        // creates values and generations for dropdown field "kies de generatie"        
+        document.querySelectorAll('[name="model"]').forEach((a) => a.addEventListener('click', () => {
           const modelValue = a.value;
-          if (modelField.filter(modelField => modelField.value).length === modelField.length) {
-            document.getElementById("loader__wrapper").classList.remove('hidden');
-            fetch(`Api/available/makesgeneration/${modelValue}`, {
-              method: 'GET',
-            }).then(response => response.json()).then((modelRes) => {
-              document.getElementById("loader__wrapper").classList.add('hidden');
-              if (modelRes) {
-                let modelData = [];
-                let modelDataSet = [];
-                modelRes.forEach((val, index) => {
-                  if (modelRes[index] !== null) {
-                    for (let i in modelRes[index]) {
-                      modelData.push(modelRes[index][i]);
-                    }
-                    modelDataSet.push(modelData);
-                    modelData = [];
-                  }
-                })
-                modelDataSet.forEach((el) => {
-                  const select = document.getElementById('generatie');
-                  const option = document.createElement('option');
-                  option.text = el[1];
-                  option.value = el[0];
-                  select.add(option);
-                })
+          document.getElementById("loader__wrapper").classList.remove('hidden');
+          fetch(`Api/available/makesgeneration/${modelValue}`, {
+            method: 'GET',
+          }).then(response => response.json()).then((modelRes) => {
+            const modelDataSet = JsonToArray(modelRes);
+            const myPromise = new Promise((resolve, reject) => {
+              if (generationEl.childNodes.length >= 1) {
+                deleteOptionEl(generationEl);
               }
+            });
+            myPromise.then(deleteOptionEl(engineEl))
+            modelDataSet.forEach((el) => {
+              CreateOptionEl(generationEl, el[1], el[0]);
             })
-          }
+            document.getElementById("loader__wrapper").classList.add('hidden');
+          })
         }))
         // creates values and engines for dropdown field "kies uw motortype"
-        const generationField = Array.from(document.querySelectorAll('[name="generatie"]'));
-        generationField.forEach((a) => a.addEventListener('change', () => {
+        document.querySelectorAll('[name="generatie"]').forEach((a) => a.addEventListener('click', () => {
           const generationValue = a.value;
-          if (generationField.filter(generationField => generationField.value).length === generationField.length) {
-            document.getElementById("loader__wrapper").classList.remove('hidden');
-            fetch(`Api/available/makesenginetype/${generationValue}`, {
-              method: 'GET',
-            }).then(response => response.json()).then((generationRes) => {
-              document.getElementById("loader__wrapper").classList.add('hidden');
-              if (generationRes) {
-                let generationData = [];
-                let generationDataSet = [];
-                generationRes.forEach((val, index) => {
-                  if (generationRes[index] !== null) {
-                    for (let i in generationRes[index]) {
-                      generationData.push(generationRes[index][i]);
-                    }
-                    generationDataSet.push(generationData);
-                    generationData = [];
-                  }
-                })
-                generationDataSet.forEach((el) => {
-                  const select = document.getElementById('motortype');
-                  const option = document.createElement('option');
-                  option.text = el[1];
-                  option.value = el[0];
-                  select.add(option);
-                })
-              }
+          document.getElementById("loader__wrapper").classList.remove('hidden');
+          fetch(`Api/available/makesenginetype/${generationValue}`, {
+            method: 'GET',
+          }).then(response => response.json()).then((generationRes) => {
+            const generationDataSet = JsonToArray(generationRes)
+            deleteOptionEl(engineEl);
+            generationDataSet.forEach((el) => {
+              CreateOptionEl(engineEl, el[1], el[0])
             })
-          }
-        }
-        )
-        )
-        const enginetypeField = Array.from(document.querySelectorAll('[name="motortype"]'));
-        // creates list of engine specs
+            document.getElementById("loader__wrapper").classList.add('hidden');
+          })
+        }))
+        // creates list of engine specs         
         infoButton.forEach((a) => a.addEventListener('click', () => {
-          const enginetypeEl = document.getElementById("motortype");
-          const enginetypeValue = enginetypeEl.value;
+          const enginetypeValue = engineEl.value;
           fetch(`Api/available/makesecutype/${enginetypeValue}`, {
             method: 'GET',
           }).then(response => response.json()).then((ecuRes) => {
-            const helll = Object.entries(ecuRes[0])
-            helll.forEach((el) => {
-              var select = document.getElementById(el[0]);
-              while (select.childNodes.length >= 1) {
-                select.removeChild(select.firstChild);
-              }
-              const option = document.createElement("p");
-              const node = document.createTextNode(el[1]);
-              option.appendChild(node);
-              const element = document.getElementById(el[0]);
-              element.appendChild(option);
+            const arr = Object.entries(ecuRes[0])
+            arr.forEach((el) => {
+              const select = document.getElementById(el[0]);
+              deleteOptionEl(select)
+              CreateTextEl(el[0], el[1])
             })
+            document.getElementById("infoButton").disabled = false;
           })
-
         }))
-        /*     
-                       
-        if (enginetypeValue >= 1) {
-          infoButton.forEach(e => e.disabled = false);
-        } else {
-          infoButton.forEach(e => e.disabled = true);
-          document.getElementById("loader__wrapper").classList.add('hidden');
-        }
-        */
 
+        JsonToArray = (el) => {
+          let Data = [];
+          let DataSet = [];
+          el.forEach((val, index) => {
+            if (el[index] !== null) {
+              for (let i in el[index]) {
+                Data.push(el[index][i]);
+              }
+              DataSet.push(Data);
+              Data = [];
+            }
+          })
+          return DataSet;
+        }
+
+        CreateOptionEl = (el, textEl, valEl) => {
+          const select = el;
+          const option = document.createElement('option');
+          option.text = textEl;
+          option.value = valEl;
+          select.add(option);
+        }
+
+        CreateTextEl = (i, el) => {
+          const option = document.createElement("p");
+          const node = document.createTextNode(el);
+          option.appendChild(node);
+          const element = document.getElementById(i);
+          element.appendChild(option);
+        }
+
+        deleteOptionEl = (el) => {
+          while (el.childNodes.length >= 1) {
+            el.removeChild(el.firstChild);
+          }
+        }
+
+        deleteAll = (el) => {
+           const myPromise = new Promise((resolve, reject) => {
+            if (el.childNodes.length >= 1) {
+              deleteOptionEl(el);
+            }
+            return myPromise
+          });
+        }
       }
+
       )();
 
     </script>

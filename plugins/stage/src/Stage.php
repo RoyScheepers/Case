@@ -98,8 +98,7 @@ class Stage extends Plugin
         Event::on(
             UrlManager::class,
             UrlManager::EVENT_REGISTER_SITE_URL_RULES,
-            static function (RegisterUrlRulesEvent $event) {
-                $event->rules['Api/available/makes'] = 'stage/default/makes';
+            static function (RegisterUrlRulesEvent $event) {                
                 $event->rules['Api/available/models/<carId>'] = 'stage/default/models';
                 $event->rules['Api/available/makesgeneration/<modelId>'] = 'stage/default/makesgeneration';
                 $event->rules['Api/available/makesenginetype/<generationId>'] = 'stage/default/makesenginetype';
