@@ -28,13 +28,13 @@
             <option value="17">Volkswagen</option>
           </select>
           <select id="model" name="model">
-            <option value="1" disabled hidden selected> Kies uw model </option>
+            <option disabled hidden selected> Kies uw model </option>
           </select>
           <select id="generatie" name="generatie">
-            <option value="1" disabled hidden selected> Kies de generatie </option>
+            <option disabled hidden selected> Kies de generatie </option>
           </select>
           <select id="motortype" name="motortype">
-            <option value="1" disabled hidden selected> Kies uw motortype </option>
+            <option disabled hidden selected> Kies uw motortype </option>
           </select>
           <button type="submit" id="infoButton" name="infoButton" class="disabled">
             Info
@@ -47,36 +47,24 @@
         <figure class="card__figure"> </figure>
         <div class="card__body">
           <div class="card__header">
+            <h2>Vermogen voor tunen: </h2>
             <div id="power_standaard">
-              <h2>Vermogen voor tunen: </h2>
             </div>
+            <h2>Vermogen na tunen: </h2>
             <div id="power_stage_1">
-              <h2>Vermogen na tunen: </h2>
             </div>
+            <h2> Koppel voor tunen: </h2>
             <div id="torque_standaard">
-              <h2> Koppel voor tunen: </h2>
             </div>
+            <h2>Koppel na tunen: </h2>
             <div id="torque_stage_1">
-              <h2>Koppel na tunen: </h2>
             </div>
-            <h2>motorspecificaties: </h2>
-            <ul>
-              <li>
-                Cilinder inhoud: info uit api
-              </li>
-              <li>
-                Compressieverhouding: info uit api
-              </li>
-              <li>
-                Type ecu: info uit api
-              </li>
-              <li>
-                Boring X slag: info uit api
-              </li>
-              <li>
-                Motornummer: info uit api
-              </li>
-            </ul>
+            <h2>Cilinder inhoud:</h2>
+            <div id="cylinder_capacity">
+            </div>
+            <h2>Compressieverhouding:</h2>
+            <div id="compression_ratio">
+            </div>
           </div>
         </div>
       </div>
@@ -85,10 +73,9 @@
     <script>
       (() => {
         // creates values and models for dropdown field "kies uw model"
-
         const carField = Array.from(document.querySelectorAll('[name="cars"]'));
-        const infoButton = Array.from(document.querySelectorAll('[name="infoButton"]'));
-        infoButton.forEach(e => e.disabled = true);
+        const infoButton = Array.from(document.querySelectorAll('[name="infoButton"]'));      
+        //infoButton.forEach(e => e.disabled = true);
         carField.forEach((a) => a.addEventListener('change', () => {
           const carValue = a.value;
           if (carField.filter(carField => carField.value).length === carField.length) {
@@ -143,7 +130,6 @@
                     modelData = [];
                   }
                 })
-                
                 modelDataSet.forEach((el) => {
                   const select = document.getElementById('generatie');
                   const option = document.createElement('option');
@@ -190,37 +176,38 @@
         }
         )
         )
-
         const enginetypeField = Array.from(document.querySelectorAll('[name="motortype"]'));
-        enginetypeField.forEach((a) => a.addEventListener('change', () => {
-          const el = document.getElementById("motortype");
-          const engineValue = el.value;
-        }))
-        // eventlisteren for the submit button 
+        // creates list of engine specs
         infoButton.forEach((a) => a.addEventListener('click', () => {
           const enginetypeEl = document.getElementById("motortype");
           const enginetypeValue = enginetypeEl.value;
           fetch(`Api/available/makesecutype/${enginetypeValue}`, {
             method: 'GET',
           }).then(response => response.json()).then((ecuRes) => {
-             
-                
-            ecuRes.forEach((el, val ) => {                   
+            const helll = Object.entries(ecuRes[0])
+            helll.forEach((el) => {
+              var select = document.getElementById(el[0]);
+              while (select.childNodes.length >= 1) {
+                select.removeChild(select.firstChild);
+              }
               const option = document.createElement("p");
-                const node = document.createTextNode(el);
-                option.appendChild(node);
-                const element = document.getElementById(val);
-                element.appendChild(option);
+              const node = document.createTextNode(el[1]);
+              option.appendChild(node);
+              const element = document.getElementById(el[0]);
+              element.appendChild(option);
             })
           })
+
         }))
-        if (modelField) {
+        /*     
+                       
+        if (enginetypeValue >= 1) {
           infoButton.forEach(e => e.disabled = false);
         } else {
           infoButton.forEach(e => e.disabled = true);
           document.getElementById("loader__wrapper").classList.add('hidden');
         }
-
+        */
 
       }
       )();

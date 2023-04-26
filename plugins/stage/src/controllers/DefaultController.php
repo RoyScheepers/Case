@@ -24,7 +24,6 @@ class DefaultController extends Controller
 {
   // Protected Properties
   // =========================================================================
-
   /**
    * @var    bool|array Allows anonymous access to this controller's actions.
    *         The actions must be in 'kebab-case'
@@ -34,7 +33,6 @@ class DefaultController extends Controller
 
   // Public Methods
   // =========================================================================
-
   /**
    * Handle a request going to our plugin's index action URL,
    * e.g.: actions/stage/default
@@ -42,23 +40,6 @@ class DefaultController extends Controller
    * @return mixed
    */
 
-  /**
-   * verbinding maken met de api 
-   * auto's uit de api laden in php 
-   * modellen uit api laden in php
-   * generatie ui api laden in php 
-   * motor type uit api laden in php 
-   * 
-   * gegevens ombouwen zodat javaScript het in html kan inladen 
-   * event listener maken die de gegevens inlaadt in de drop down 
-   * 
-   * gegevens tonen in het tekst veld die bij de auto hoort 
-   * vermogen voor tunen uit api halen 
-   * vermogen na tunen uit api halen 
-   * koppel info voor tunen uit api halen 
-   * koppel info na tunen uit api halen 
-   * motor specs uit api halen 
-   */
   public $apiKey;
   public $apiBase;
   public function actionMakes()
@@ -157,7 +138,7 @@ class DefaultController extends Controller
 
   public function actionGetecu($engineId)
   {
-    // to fetch a enginetype you need the id of a generation
+    // to fetch a ecu and engine specs you need the id of a engine
     // fetches engine of generation of a model from api and builds it to a json array containing id and name of a generation
     // for testing use this URL: https://local.websteen.nl/Api/available/makesecutype/5839
     $ecuId = $engineId;
@@ -179,7 +160,9 @@ class DefaultController extends Controller
         'power_standaard' => $ecuItem['power']['standard'],
         'power_stage_1' => $ecuItem['power']['stage_1'],
         'torque_standaard' => $ecuItem['torque']['standard'],
-        'torque_stage_1' => $ecuItem['torque']['stage_1']
+        'torque_stage_1' => $ecuItem['torque']['stage_1'],
+        'cylinder_capacity' => $ecuItem['cylinder_capacity'],
+        'compression_ratio' => $ecuItem['compression_ratio']
       ]);
     }
     return json_encode($ecuArray);
