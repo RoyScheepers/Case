@@ -21,7 +21,7 @@
         </div>
         <div id="formulier">
           <select id="cars" name="cars" class="custom__select">
-            <option value="1">Kies uw merk</option>
+            <option>Kies uw merk</option>
             <option value="2">Audi</option>
             <option value="4">Bmw</option>
             <option value="13">Seat</option>
@@ -46,56 +46,60 @@
       <div class="card">
         <figure class="card__figure"> </figure>
         <div class="card__body">
-          <div class="card__header">
-            <div>
-              <h2>Vermogen voor tunen: </h2>
-              <div id="power_standaard" name="power_standaard">
-              </div>
-              <div>
-                <p>Pk</p>
-              </div>
-            </div>
-            <div>
-              <h2>Vermogen na tunen: </h2>
-              <div id="power_stage_1" name="power_stage_1">
-              </div>
-              <div>
-                <p>Pk</p>
-              </div>
-            </div>
-            <div>
-              <h2> Koppel voor tunen: </h2>
-              <div id="torque_standaard" name="torque_standaard">
-              </div>
-              <div>
-                <p>Pk</p>
-              </div>
-            </div>
-            <div>
-              <h2>Koppel na tunen: </h2>
-              <div id="torque_stage_1" name="torque_stage_1">
-              </div>
-              <div>
-                <p>Nm</p>
-              </div>
-            </div>
-            <div>
-              <h2>Cilinder inhoud:</h2>
-              <div id="cylinder_capacity" name="cylinder_capacity">
-                <div>
-                  <p>CC</p>
-                </div>
-              </div>
-            </div>
-            <div>
-              <h2>Compressieverhouding:</h2>
-              <div id="compression_ratio" name="compression_ratio">
-              </div>
-              <div>
-                <p>Nm</p>
-              </div>
+          <div class="text__Item">
+            <h3>U koos voor een: </h3>
+            <div id="car_type" name="car_type" class="textItem">
             </div>
           </div>
+          <div class="text__Item">
+            <h2>Vermogen voor tunen: </h2>
+            <div id="power_standaard" name="power_standaard" class="textItem">
+            </div>
+            <div class="textItem">
+              <p>Pk</p>
+            </div>
+          </div>
+          <div class="text__Item">
+            <h2>Vermogen na tunen: </h2>
+            <div id="power_stage_1" name="power_stage_1" class="textItem">
+            </div>
+            <div class="textItem">
+              <p>Pk</p>
+            </div>
+          </div>
+          <div class="text__Item">
+            <h2> Koppel voor tunen: </h2>
+            <div id="torque_standaard" name="torque_standaard" class="textItem">
+            </div>
+            <div class="textItem">
+              <p>Pk</p>
+            </div>
+          </div>
+          <div class="text__Item">
+            <h2>Koppel na tunen: </h2>
+            <div id="torque_stage_1" name="torque_stage_1" class="textItem">
+            </div>
+            <div class="textItem">
+              <p>Nm</p>
+            </div>
+          </div>
+          <div class="text__Item">
+            <h2>Cilinder inhoud:</h2>
+            <div id="cylinder_capacity" name="cylinder_capacity" class="textItem">
+            </div>
+            <div class="textItem">
+              <p>CC</p>
+            </div>
+          </div>
+          <div class="text__Item">
+            <h2>Compressieverhouding:</h2>
+            <div id="compression_ratio" name="compression_ratio" class="textItem">
+            </div>
+            <div class="textItem">
+              <p>Nm</p>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
@@ -106,15 +110,14 @@
 
       // creates values and models for dropdown field "kies uw model"
       const infoButton = Array.from(document.querySelectorAll('[name="infoButton"]'));
+      const carEl = document.getElementById('cars');
       const modelEl = document.getElementById('model');
       const generationEl = document.getElementById('generatie');
       const engineEl = document.getElementById('motortype');
       document.querySelectorAll('[name="cars"]').forEach((a) => a.addEventListener('click', () => {
         const carValue = a.value;
         document.getElementById("loader__wrapper").classList.remove('hidden');
-        fetch(`/Api/available/models/${carValue}`, {
-          method: 'GET',
-        }).then(response => response.json()).then((carRes) => {
+        fetchFunc('models', carValue).then(response => response.json()).then((carRes) => {
           const carDataSet = JsonToArray(carRes)
           promiseFunc(modelEl)
             .then(deleteOptionEl(generationEl))
@@ -131,9 +134,7 @@
       document.querySelectorAll('[name="model"]').forEach((a) => a.addEventListener('click', () => {
         const modelValue = a.value;
         document.getElementById("loader__wrapper").classList.remove('hidden');
-        fetch(`Api/available/makesgeneration/${modelValue}`, {
-          method: 'GET',
-        }).then(response => response.json()).then((modelRes) => {
+        fetchFunc('makesgeneration', modelValue).then(response => response.json()).then((modelRes) => {
           const modelDataSet = JsonToArray(modelRes);
           promiseFunc(generationEl)
             .then(deleteOptionEl(engineEl))
@@ -148,9 +149,7 @@
       document.querySelectorAll('[name="generatie"]').forEach((a) => a.addEventListener('click', () => {
         const generationValue = a.value;
         document.getElementById("loader__wrapper").classList.remove('hidden');
-        fetch(`Api/available/makesenginetype/${generationValue}`, {
-          method: 'GET',
-        }).then(response => response.json()).then((generationRes) => {
+        fetchFunc('makesenginetype', generationValue).then(response => response.json()).then((generationRes) => {
           const generationDataSet = JsonToArray(generationRes)
           deleteOptionEl(engineEl);
           generationDataSet.forEach((el) => {
@@ -162,9 +161,7 @@
       // creates list of engine specs         
       infoButton.forEach((a) => a.addEventListener('click', () => {
         const enginetypeValue = engineEl.value;
-        fetch(`Api/available/makesecutype/${enginetypeValue}`, {
-          method: 'GET',
-        }).then(response => response.json()).then((ecuRes) => {
+        fetchFunc('makesecutype', enginetypeValue).then(response => response.json()).then((ecuRes) => {
           const arr = Object.entries(ecuRes[0])
           arr.forEach((el) => {
             const select = document.getElementById(el[0]);
@@ -173,7 +170,17 @@
           })
           document.getElementById("infoButton").disabled = false;
         })
+     /*   fetch('Api/available/makes', { method: 'GET' }).then(response => response.json()).then((makeRes) => {
+          const modelDataSet = JsonToArray(makeRes);
+        })*/
       }))
+
+      fetchFunc = (param, value) => {
+        const fetchRes = fetch(`Api/available/${param}/${value}`, {
+          method: 'GET',
+        })
+        return fetchRes
+      }
       promiseFunc = (el) => {
         const myPromise = new Promise((resolve, reject) => {
           if (el.childNodes.length >= 1) {

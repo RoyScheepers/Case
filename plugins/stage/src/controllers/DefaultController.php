@@ -41,7 +41,27 @@ class DefaultController extends Controller
 
   public $apiKey;
   public $apiBase;
- 
+  public function actionMakes()
+  { // to fetch models you need the id of a make 
+    //fetches data from api and converts it to a json array containing id and name of a car
+    // for testing use this URL:https://local.websteen.nl/Api/available/makes
+    
+    $this->apiBase = 'https://api.dyno-chiptuningfiles.com/v1/makes?power_type=pk';
+    $this->apiKey = App::env('WEBSTEEN_API_KEY');
+    $client = new Client();
+    $response = $client->request('GET', $this->apiBase, [
+      'headers' => [
+        'Accept' => 'application/json',
+        'Authorization' => $this->apiKey
+      ]
+    ]);
+    $responseBody = json_decode($response->getBody(), true);
+    $CarArray = array();
+    foreach ($responseBody['data'] as $x => $car) {
+      array_push($CarArray,  ['id' => $car['id'], 'name' => $car['name']]);
+    }
+    return json_encode($CarArray);
+  }
 
 
   public function actionModels($modelId)

@@ -274,80 +274,6 @@ img {
     color: black;
 }
 
-.form__group--styled {
-    position: relative;
-    padding-top: 1.5rem;
-  }
-  .form__group--styled .form__input,
-  .form__group--styled .custom-select {
-    border-top: none;
-    border-right: none;
-    border-left: none;
-  }
-  .form__group--styled .form__label {
-    position: absolute;
-    top: 0;
-    right: 0;
-    left: 0;
-    max-width: 100%;
-    overflow: hidden;
-    font-weight: 700;
-    color: #003d80;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    font-size: 0.9375rem;
-    line-height: 1.5;
-  }
-  .form__group--styled .custom-select select {
-    color: inherit;
-  }
-  .form__group--styled.is-set .custom-select,
-  .form__group--styled.is-set .form__input {
-    color: #003d80;
-    border-bottom-color: #003d80;
-    box-shadow: 0 1px 0 0 #003d80;
-  }
-
-  .form__group > .form-toggle + .form-toggle {
-    margin-top: 0.75rem;
-  }
-  .form__group + .form__group {
-    margin-top: 1.5em;
-  }
-  .form__group [type=date],
-  .form__group [type=time] {
-    position: relative;
-  }
-  .form__group [type=date]::-webkit-calendar-picker-indicator, .form__group [type=date]::-webkit-time-picker-indicator,
-  .form__group [type=time]::-webkit-calendar-picker-indicator,
-  .form__group [type=time]::-webkit-time-picker-indicator {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 100%;
-    height: 100%;
-    padding: 0;
-    color: transparent;
-    background: transparent;
-  }
-  .form__group [type=date] + svg,
-  .form__group [type=time] + svg {
-    position: absolute;
-    /* 1 */
-    right: 0.5em;
-    bottom: 0.75em;
-    z-index: 1;
-  }
-  .form__group [type=date]::-ms-clear,
-  .form__group [type=time]::-ms-clear {
-    display: none;
-  }
-
-  .form__label {
-  display: inline-block;
-  margin-bottom: .5em;
-}
-
 /* The container must be positioned relative: */
 .custom__select {
     position: relative;
@@ -406,4 +332,15 @@ img {
   
   .select__items div:hover, .same-as-selected {
     background-color: rgba(0, 0, 0, 0.1);
+  }
+
+  .text__item {   
+    padding: 2rem 2rem;
+    text-align: center;
+  }
+
+  .textItem {
+    display: inline-block; 
+    border :rgba(0, 0, 0, 0.5)   ;    
+    
   }
