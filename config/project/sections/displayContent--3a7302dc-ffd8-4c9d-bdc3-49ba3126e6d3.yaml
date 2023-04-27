@@ -1,0 +1,15 @@
+defaultPlacement: end
+enableVersioning: true
+handle: displayContent
+name: 'Display content'
+propagationMethod: all
+siteSettings:
+  b5f9038a-af7a-4077-b032-b9ae4a5977d0: # Stage
+    enabledByDefault: true
+    hasUrls: true
+    template: display-content/_entry
+    uriFormat: 'display-content/{slug}'
+structure:
+  maxLevels: null
+  uid: 8c5e23ae-7453-4aa3-acdd-69b71603867a
+type: structure
