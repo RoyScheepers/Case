@@ -98,19 +98,18 @@ class Stage extends Plugin
         Event::on(
             UrlManager::class,
             UrlManager::EVENT_REGISTER_SITE_URL_RULES,
-            function (RegisterUrlRulesEvent $event) {
-                $event->rules['Api/available'] = 'stage/default/index';
+            static function (RegisterUrlRulesEvent $event) { 
+                $event->rules['Api/available/makes'] = 'stage/default/makes';           
+                $event->rules['Api/available/models/<modelId>'] = 'stage/default/models';
+                $event->rules['Api/available/makesgeneration/<generationId>'] = 'stage/default/makesgeneration';
+                $event->rules['Api/available/makesenginetype/<engineId>'] = 'stage/default/makesenginetype';
+                $event->rules['Api/available/makesecutype/<ecuId>'] = 'stage/default/getecu';
+                
+               
             }
         );
 
-        // Register our CP routes
-        Event::on(
-            UrlManager::class,
-            UrlManager::EVENT_REGISTER_CP_URL_RULES,
-            function (RegisterUrlRulesEvent $event) {
-                $event->rules['cpActionTrigger1'] = 'stage/default/do-something';
-            }
-        );
+     
            
 /**
  * Logging in Craft involves using one of the following methods:

@@ -1,217 +1,239 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="{{ currentSite.language }}">
 
-<head>   
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta charset="utf-8" />
-    <title>{{ docTitle ?? siteName }}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0,
+<head>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta charset="utf-8" />
+  <title>Websteen</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0,
       maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-    <meta name="referrer" content="origin-when-cross-origin" />
-    {% css alias('@web') ~ '/web/assets/' ~ 'styles.css' with {type: 'text/css'} %}
+  <meta name="referrer" content="origin-when-cross-origin" />
+
+  {% css alias('@web') ~ '/web/assets/' ~ 'styles.css' with {type: 'text/css'} %}
 </head>
 
-<body>  
-    <div id="main">
-        <div class="container">
-          <div class="mainContent">
-            <div class="formulier">
-              <div class="loader__wrapper hidden" id="loader__wrapper">
-                <div class="loader"></div>
-              </div>
-              <div id="formulier">
-                {% set form = craft.formie.forms.handle('findYourCar').all() %}
-                {{ craft.formie.renderForm('findYourCar') }}
-              </div>
-            </div>
-          </div>        
+<body>
+  <div id="main">
+    <div class="container">
+      <div class="formulier">
+        <div class="loader__wrapper hidden" id="loader__wrapper">
+          <div class="loader"></div>
+        </div>
+        <div id="formulier">
+          <select id="cars" name="cars" class="custom__select">
+            <option>Kies uw merk</option>
+            <option value="2">Audi</option>
+            <option value="4">Bmw</option>
+            <option value="13">Seat</option>
+            <option value="17">Volkswagen</option>
+          </select>
+          <select id="model" name="model">
+            <option> Kies uw model </option>
+          </select>
+          <select id="generatie" name="generatie">
+            <option> Kies de generatie </option>
+          </select>
+          <select id="motortype" name="motortype">
+            <option> Kies uw motortype </option>
+          </select>
+          <button type="submit" id="infoButton" name="infoButton">
+            Info
+          </button>
+        </div>
       </div>
-      
-      <script>
-        (() => {
-          const allFields = Array.from(document.querySelectorAll('[name="fields[voornaam]"],[name="fields[achternaam]"],[name="fields[aantalPersonen]"],[name="fields[adres][address1]"],[name="fields[adres][zip]"],[name="fields[adres][state]"]'));
-          const fields = Array.from(document.querySelectorAll(' [name="fields[aankomstDatum][datetime]"], [name="fields[vertrekDatum][datetime]"], [name="fields[drop]"]'));
-          const hiddenFields = Array.from(document.querySelectorAll('.fui-hidden'));
-          const accommodatie = Array.from(document.querySelectorAll('[name="fields[drop]"]'));
-          const Submit = Array.from(document.querySelectorAll('[data-submit-action="submit"]'));
-          Submit.forEach(e => e.disabled = true);
-          accommodatie.forEach((el) => el.addEventListener('change', () => {
-            if (el.value === "") {
-              Submit.forEach(e => e.disabled = true);
-            }
-          }))
-          fields.forEach((a) => a.addEventListener('change', () => {
-            if (fields.filter(field => field.value).length === fields.length) {
-              document.getElementById("loader__wrapper").classList.remove('hidden');
-              const fd = new FormData(document.querySelector('form'));
-              fd.delete('action');
-              fetch('/Api/available', {
-                method: 'POST',
-                body: fd,
-              }).then(response => response.json()).then((res) => {
-                document.getElementById("loader__wrapper").classList.add('hidden');
-                if (res.success) {
-                  if (fields.filter(field => field.value).length === fields.length && allFields.filter(field => field.value).length === allFields.length) {
-                    Submit.forEach(e => e.disabled = false);
-                  }
-                  // als er plek is dan komen de rest van de velden tevoorschijn 
-                  hiddenFields.forEach(e => e.classList.remove('fui-hidden'));
-                } else if (res.fail) {
-                  Submit.forEach(e => e.disabled = true);
-                  document.getElementById("loader__wrapper").classList.add('hidden');
-                  hiddenFields.forEach(e => e.classList.add('fui-hidden'));
-                }
-              })
-            } else {
-              hiddenFields.forEach(e => e.classList.add('fui-hidden'));
-            }
+    </div>
+    <div class="container">
+      <div class="card">
+        <figure class="card__figure"> </figure>
+        <div class="card__body">
+          <div class="text__Item">
+            <h3>U koos voor een: </h3>
+            <div id="car_type" name="car_type" class="textItem">
+            </div>
+          </div>
+          <div class="text__Item">
+            <h2>Vermogen voor tunen: </h2>
+            <div id="power_standaard" name="power_standaard" class="textItem">
+            </div>
+            <div class="textItem">
+              <p>Pk</p>
+            </div>
+          </div>
+          <div class="text__Item">
+            <h2>Vermogen na tunen: </h2>
+            <div id="power_stage_1" name="power_stage_1" class="textItem">
+            </div>
+            <div class="textItem">
+              <p>Pk</p>
+            </div>
+          </div>
+          <div class="text__Item">
+            <h2> Koppel voor tunen: </h2>
+            <div id="torque_standaard" name="torque_standaard" class="textItem">
+            </div>
+            <div class="textItem">
+              <p>Pk</p>
+            </div>
+          </div>
+          <div class="text__Item">
+            <h2>Koppel na tunen: </h2>
+            <div id="torque_stage_1" name="torque_stage_1" class="textItem">
+            </div>
+            <div class="textItem">
+              <p>Nm</p>
+            </div>
+          </div>
+          <div class="text__Item">
+            <h2>Cilinder inhoud:</h2>
+            <div id="cylinder_capacity" name="cylinder_capacity" class="textItem">
+            </div>
+            <div class="textItem">
+              <p>CC</p>
+            </div>
+          </div>
+          <div class="text__Item">
+            <h2>Compressieverhouding:</h2>
+            <div id="compression_ratio" name="compression_ratio" class="textItem">
+            </div>
+            <div class="textItem">
+              <p>Nm</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+
+      // creates values and models for dropdown field "kies uw model"
+      const infoButton = Array.from(document.querySelectorAll('[name="infoButton"]'));
+      const carEl = document.getElementById('cars');
+      const modelEl = document.getElementById('model');
+      const generationEl = document.getElementById('generatie');
+      const engineEl = document.getElementById('motortype');
+      document.querySelectorAll('[name="cars"]').forEach((a) => a.addEventListener('click', () => {
+        const carValue = a.value;
+        document.getElementById("loader__wrapper").classList.remove('hidden');
+        fetchFunc('models', carValue).then(response => response.json()).then((carRes) => {
+          const carDataSet = JsonToArray(carRes)
+          promiseFunc(modelEl)
+            .then(deleteOptionEl(generationEl))
+            .then(deleteOptionEl(engineEl))
+            .then(CreateOptionEl(generationEl, 'Kies uw generatie', ''))
+            .then(CreateOptionEl(engineEl, 'Kies uw motortype', ''))
+          carDataSet.forEach((el) => {
+            CreateOptionEl(modelEl, el[1], el[0])
           })
-          )
-          allFields.forEach
-          const getModifier = (name) => {
-            const addressModifier = name.match(/fields\[adres]\[(\w+)]/);
-            if (addressModifier && addressModifier[1]) {
-              return { type: 'address', modifier: addressModifier[1] };
-            }
-            const naamModifier = name.match(/fields\[(\w+)]/);
-            if (naamModifier && naamModifier[1]) {
-              return { type: 'name', modifier: naamModifier[1] };
-            }
-            return null;
+          document.getElementById("loader__wrapper").classList.add('hidden');
+        })
+      }))
+      // creates values and generations for dropdown field "kies de generatie"        
+      document.querySelectorAll('[name="model"]').forEach((a) => a.addEventListener('click', () => {
+        const modelValue = a.value;
+        document.getElementById("loader__wrapper").classList.remove('hidden');
+        fetchFunc('makesgeneration', modelValue).then(response => response.json()).then((modelRes) => {
+          const modelDataSet = JsonToArray(modelRes);
+          promiseFunc(generationEl)
+            .then(deleteOptionEl(engineEl))
+            .then(CreateOptionEl(engineEl, 'Kies uw motortype', ''))
+          modelDataSet.forEach((el) => {
+            CreateOptionEl(generationEl, el[1], el[0]);
+          })
+          document.getElementById("loader__wrapper").classList.add('hidden');
+        })
+      }))
+      // creates values and engines for dropdown field "kies uw motortype"
+      document.querySelectorAll('[name="generatie"]').forEach((a) => a.addEventListener('click', () => {
+        const generationValue = a.value;
+        document.getElementById("loader__wrapper").classList.remove('hidden');
+        fetchFunc('makesenginetype', generationValue).then(response => response.json()).then((generationRes) => {
+          const generationDataSet = JsonToArray(generationRes)
+          deleteOptionEl(engineEl);
+          generationDataSet.forEach((el) => {
+            CreateOptionEl(engineEl, el[1], el[0])
+          })
+          document.getElementById("loader__wrapper").classList.add('hidden');
+        })
+      }))
+      // creates list of engine specs         
+      infoButton.forEach((a) => a.addEventListener('click', () => {
+        const enginetypeValue = engineEl.value;
+        fetchFunc('makesecutype', enginetypeValue).then(response => response.json()).then((ecuRes) => {
+          const arr = Object.entries(ecuRes[0])
+          arr.forEach((el) => {
+            const select = document.getElementById(el[0]);
+            deleteOptionEl(select)
+            CreateTextEl(el[0], el[1])
+          })
+          document.getElementById("infoButton").disabled = false;
+        })
+     /*   fetch('Api/available/makes', { method: 'GET' }).then(response => response.json()).then((makeRes) => {
+          const modelDataSet = JsonToArray(makeRes);
+        })*/
+      }))
+
+      fetchFunc = (param, value) => {
+        const fetchRes = fetch(`Api/available/${param}/${value}`, {
+          method: 'GET',
+        })
+        return fetchRes
+      }
+      promiseFunc = (el) => {
+        const myPromise = new Promise((resolve, reject) => {
+          if (el.childNodes.length >= 1) {
+            deleteOptionEl(el);
           }
-          allFields.forEach((a) => a.addEventListener('keyup', () => {
-            if (a.value.length === 0) {
-              const { type, modifier } = getModifier(a.name);
-              hideError(`#error${modifier[0].toUpperCase()}${modifier.slice(1)}`);
+        });
+        return myPromise;
+      }
+      JsonToArray = (el) => {
+        let Data = [];
+        let DataSet = [];
+        el.forEach((val, index) => {
+          if (el[index] !== null) {
+            for (let i in el[index]) {
+              Data.push(el[index][i]);
             }
-            const nonValidFields = allFields.filter((el) => {
-              if (el.value.length === 0) {
-                return true;
-              }
-              const { type, modifier } = getModifier(el.name);
-              if (type === 'address') return !validateAddress(modifier, el);
-              if (type === 'name') return !validateNaam(modifier, el);
-              return false;
-            });
-            if (nonValidFields.length === 0) {
-              Submit.forEach(e => e.disabled = false);
-            } else {
-              Submit.forEach(e => e.disabled = true);
-            }
-          }));
-          const showError = (fieldname, showErrorName) => {
-            const errorMessage = document.querySelector(`${showErrorName}`);
-            if (errorMessage < 1) {
-              var tag = document.createElement("p");
-              tag.id = `${showErrorName}`
-              var text = document.createTextNode('Oeps er is iets fout gegaan');
-              tag.appendChild(text);
-              var el = document.querySelector(`${fieldname}`);
-              el.parentElement.appendChild(tag);
-            }
+            DataSet.push(Data);
+            Data = [];
           }
-          const hideError = (hideErrorName) => {
-            const errorMessage = document.querySelector(`${hideErrorName}`);
-            if (errorMessage !== null) {
-              errorMessage.parentElement.removeChild(errorMessage);
-            }
-          }
-          const validateNaam = (modifierNaam, a) => {
-            let dataNaamGegevens;
-            switch (modifierNaam) {
-              case 'voornaam':
-                dataNaamGegevens = a.closest(`[data-valid-voornaam]`).dataset.validVoornaam;
-                const errorVoornaam = document.querySelector('[id="errorVoornaam"]');
-                if (dataNaamGegevens) {
-                  voornaam = (new RegExp(dataNaamGegevens)).test(a.value);
-                  if (voornaam === true) {
-                    hideError('#errorVoornaam');
-                    return true;
-                  } else if (voornaam === false) {
-                    if (errorVoornaam < 1) {
-                      showError('[name="fields[voornaam]"]', 'errorVoornaam');
-                    }
-                    return false;
-                  }
-                }
-                break;
-              case 'achternaam':
-                dataNaamGegevens = a.closest(`[data-valid-achternaam]`).dataset.validAchternaam;
-                if (dataNaamGegevens) {
-                  achternaam = (new RegExp(dataNaamGegevens)).test(a.value);
-                  const errorAchternaam = document.querySelector('[id="errorAchternaam"]');
-                  if (achternaam === true) {
-                    hideError('#errorAchternaam');
-                    return true;
-                  } else if (achternaam === false) {
-                    if (errorAchternaam < 1) {
-                      showError('[name="fields[achternaam]"]', 'errorAchternaam');
-                    }
-                    return false
-                  }
-                }
-                break;
-              case 'aantalPersonen':
-                return a.value > 0;
-            }
-          }
-          const validateAddress = (modifierAddress, a) => {
-            let dataGegevens;
-            switch (modifierAddress) {
-              case 'address1':
-                dataGegevens = a.closest(`[data-valid-state]`).dataset.validAddress1;
-                const errorAddress1 = document.querySelector('[id="errorAddress1"]');
-                if (dataGegevens) {
-                  address1 = (new RegExp(dataGegevens)).test(a.value);
-                  if (address1 === true) {
-                    hideError('#errorAddress1');
-                    return true;
-                  } else if (address1 === false) {
-                    if (errorAddress1 < 1) {
-                      showError('[name="fields[adres][address1]"]', 'errorAddress1');
-                    }
-                    return false;
-                  }
-                }
-                break;
-              case 'zip':
-                dataGegevens = a.closest(`[data-valid-state]`).dataset.validZip;
-                const errorZip = document.querySelector('[id="errorZip"]')
-                if (dataGegevens) {
-                  zip = (new RegExp(dataGegevens)).test(a.value);
-                  if (zip === true) {
-                    hideError('#errorZip');
-                    return true;
-                  } else if (zip === false) {
-                    if (errorZip < 1) {
-                      showError('[name="fields[adres][zip]"]', 'errorZip');
-                    }
-                    return false;
-                  }
-                }
-                break;
-              case 'state':
-                dataGegevens = a.closest(`[data-valid-state]`).dataset.validState;
-                const errorState = document.querySelector('[id="errorState"]')
-                if (dataGegevens) {
-                  state = (new RegExp(dataGegevens)).test(a.value);
-                  if (state === true) {
-                    hideError('#errorState');
-                    return true;
-                  } else if (state === false) {
-                    if (errorState < 1) {
-                      showError('[name="fields[adres][state]"]', 'errorState');
-                    }
-                    return false;
-                  }
-                }
-                break;
-              default: false;
-            }
-            return true;
-          }
+        })
+        return DataSet;
+      }
+
+      CreateOptionEl = (el, textEl, valEl) => {
+        const select = el;
+        const option = document.createElement('option');
+        option.text = textEl;
+        option.value = valEl;
+        select.add(option);
+      }
+
+      CreateTextEl = (i, el) => {
+        const option = document.createElement("p");
+        const node = document.createTextNode(el);
+        option.appendChild(node);
+        const element = document.getElementById(i);
+        element.appendChild(option);
+      }
+
+      deleteOptionEl = (el) => {
+        while (el.childNodes.length >= 1) {
+          el.removeChild(el.firstChild);
         }
-        )();
-      </script>
-    </body>
+      }
+
+
+
+    }
+
+    )();
+
+  </script>
+
+</body>
+
 </html>
