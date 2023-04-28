@@ -47,11 +47,6 @@
         <figure class="card__figure"> </figure>
         <div class="card__body">
           <div class="text__Item">
-            <h3>U koos voor een: </h3>
-            <div id="car_type" name="car_type" class="textItem">
-            </div>
-          </div>
-          <div class="text__Item">
             <h2>Vermogen voor tunen: </h2>
             <div id="power_standaard" name="power_standaard" class="textItem">
             </div>
@@ -170,9 +165,6 @@
           })
           document.getElementById("infoButton").disabled = false;
         })
-     /*   fetch('Api/available/makes', { method: 'GET' }).then(response => response.json()).then((makeRes) => {
-          const modelDataSet = JsonToArray(makeRes);
-        })*/
       }))
 
       fetchFunc = (param, value) => {
