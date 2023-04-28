@@ -107,7 +107,6 @@
 
   <script>
     (() => {
-
       // creates values and models for dropdown field "kies uw model"
       const infoButton = Array.from(document.querySelectorAll('[name="infoButton"]'));
       const carEl = document.getElementById('cars');
@@ -179,10 +178,7 @@
             }
           })
         })
-
-
       }))
-
 
       fetchFunc = (param, value) => {
         const fetchRes = fetch(`Api/available/${param}/${value}`, {
@@ -235,7 +231,6 @@
         }
       }
     }
-
     )();
 
   </script>
