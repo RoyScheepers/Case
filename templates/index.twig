@@ -47,6 +47,11 @@
         <figure class="card__figure"> </figure>
         <div class="card__body">
           <div class="text__Item">
+            <h3 class="textItem">U koos voor een </h3>
+            <div id="car_type" name="car_type" class="textItem">
+            </div>
+          </div>
+          <div class="text__Item">
             <h2>Vermogen voor tunen: </h2>
             <div id="power_standaard" name="power_standaard" class="textItem">
             </div>
@@ -155,17 +160,29 @@
       }))
       // creates list of engine specs         
       infoButton.forEach((a) => a.addEventListener('click', () => {
+        document.getElementById('car_type').innerHTML = "";  
         const enginetypeValue = engineEl.value;
         fetchFunc('makesecutype', enginetypeValue).then(response => response.json()).then((ecuRes) => {
-          const arr = Object.entries(ecuRes[0])
-          arr.forEach((el) => {
+          const arr = Object.entries(ecuRes[0])                  
+          arr.forEach((el) => {            
             const select = document.getElementById(el[0]);
-            deleteOptionEl(select)
-            CreateTextEl(el[0], el[1])
+            deleteOptionEl(select);            
+            CreateTextEl(el[0], el[1]);
           })
           document.getElementById("infoButton").disabled = false;
         })
+        fetch('Api/available/makes', { method: 'GET' }).then(response => response.json()).then((makeRes) => {
+          const modelDataSet = JsonToArray(makeRes);
+          modelDataSet.forEach((el) => {
+            if (el[0] == carEl.value) {
+              CreateTextEl('car_type', el[1])
+            }
+          })
+        })
+
+
       }))
+
 
       fetchFunc = (param, value) => {
         const fetchRes = fetch(`Api/available/${param}/${value}`, {
@@ -218,6 +235,7 @@
         }
       }
     }
+
     )();
 
   </script>
